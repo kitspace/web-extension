@@ -1,8 +1,8 @@
 {
-  "name": "chrome-extension-boilerplate-react",
-  "version": "4.3.5",
+  "name": "@kitspace/web-extension",
+  "version": "0.0.0",
   "description": "A chrome extension boilerplate built with React 17, Webpack 5, and Webpack Dev Server 4",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "repository": {
     "type": "git",
     "url": "https://github.com/lxieyang/chrome-extension-boilerplate-react.git"
