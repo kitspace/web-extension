@@ -13,7 +13,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*", "<all_urls>"],
+      "matches": ["https://github.com/*/blob/*.kicad_pcb"],
       "js": ["contentScript.bundle.js"],
       "css": ["content.styles.css"]
     }
@@ -23,5 +23,8 @@
       "resources": ["content.styles.css", "icon-128.png", "icon-34.png"],
       "matches": []
     }
+  ],
+  "host_permissions": [
+    "https://processor.master.kitspace.dev"
   ]
 }
