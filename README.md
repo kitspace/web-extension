@@ -129,14 +129,14 @@ To this task this boilerplate import the file `./secrets.<THE-NODE_ENV>.js` on y
 _./secrets.development.js_
 
 ```js
-export default { key: '123' };
+export default { key: '123' }
 ```
 
 _./src/popup.js_
 
 ```js
-import secrets from 'secrets';
-ApiCall({ key: secrets.key });
+import secrets from 'secrets'
+ApiCall({ key: secrets.key })
 ```
 
 :point_right: The files with name `secrets.*.js` already are ignored on the repository.
