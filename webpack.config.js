@@ -14,7 +14,7 @@ var alias = {
 }
 
 // load the secrets
-var secretsPath = path.join(__dirname, 'secrets.' + env.NODE_ENV + '.js')
+var secretsPath = path.join(__dirname, 'secrets.' + env.NODE_ENV + '.ts')
 
 var fileExtensions = [
   'jpg',
@@ -36,9 +36,10 @@ if (fileSystem.existsSync(secretsPath)) {
 var options = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
-    options: path.join(__dirname, 'src', 'pages', 'Options', 'index.jsx'),
-    background: path.join(__dirname, 'src', 'pages', 'Background', 'index.js'),
-    contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.js'),
+    options: path.join(__dirname, 'src', 'pages', 'Options', 'index.tsx'),
+    background: path.join(__dirname, 'src', 'pages', 'Background', 'index.ts'),
+    contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.ts'),
+    popup: path.join(__dirname, 'src', 'pages', 'Popup', 'index.tsx'),
   },
   chromeExtensionBoilerplate: {
     notHotReload: ['background', 'contentScript'],
@@ -116,7 +117,7 @@ var options = {
           from: 'src/manifest.json',
           to: path.join(__dirname, 'build'),
           force: true,
-          transform: function (content, path) {
+          transform: function (content) {
             // generates the manifest file using the package.json informations
             return Buffer.from(
               JSON.stringify({
