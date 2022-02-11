@@ -10,7 +10,7 @@
   "scripts": {
     "build": "node utils/build.js",
     "dev": "node utils/webserver.js",
-    "lint": "eslint 'src/**/*' 'utils/**/*'",
+    "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "fmt": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}' '!build/*'"
   },
   "dependencies": {
@@ -27,6 +27,7 @@
     "@types/chrome": "^0.0.177",
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.11",
+    "@types/webpack-env": "^1.16.3",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.3",
     "babel-preset-react-app": "^10.0.1",

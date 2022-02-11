@@ -71,7 +71,7 @@ To make your workflow much more efficient this boilerplate uses the [webpack ser
 You can run the dev mode on other port if you want. Just specify the env var `port` like this:
 
 ```
-$ PORT=6002 yarn dev
+$ PORT=6002 yarn  dev
 ```
 
 ## Content Scripts
@@ -124,22 +124,22 @@ Now, the content of `build` folder will be the extension ready to be submitted t
 
 If you are developing an extension that talks with some API you probably are using different keys for testing and production. Is a good practice you not commit your secret keys and expose to anyone that have access to the repository.
 
-To this task this boilerplate import the file `./secrets.<THE-NODE_ENV>.js` on your modules through the module named as `secrets`, so you can do things like this:
+To this task this boilerplate import the file `./secrets.<THE-NODE_ENV>.ts` on your modules through the module named as `secrets`, so you can do things like this:
 
-_./secrets.development.js_
+_./secrets.development.ts_
 
 ```js
 export default { key: '123' }
 ```
 
-_./src/popup.js_
+_./src/popup.ts_
 
 ```js
 import secrets from 'secrets'
 ApiCall({ key: secrets.key })
 ```
 
-:point_right: The files with name `secrets.*.js` already are ignored on the repository.
+:point_right: The files with name `secrets.*.ts` already are ignored on the repository.
 
 ## Resources:
 
