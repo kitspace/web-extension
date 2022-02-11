@@ -11,6 +11,7 @@
     "build": "node utils/build.js",
     "dev": "node utils/webserver.js",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
+    "tsc": "tsc",
     "fmt": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}' '!build/*'"
   },
   "dependencies": {

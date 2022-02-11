@@ -15,4 +15,5 @@ jobs:
       - uses: actions/checkout@v2
       - run: 'yarn install'
       - run: 'yarn lint --max-warnings 0'
+      - run: 'yarn tsc'
       - run: 'yarn build'
