@@ -1,24 +1,18 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { KITSPACE_PROCESSOR_API_KEY } from 'secrets'
 import { delay } from '../../utils'
 import { KicadPcbViewer } from '../../containers/KicadPcbViewer'
+
 //eslint-disable-next-line no-console
 console.log('Kitspace WebExtension content script loaded')
 
-const PROCESSOR_DOMAIN = 'https://processor.master.staging.kitspace.dev'
-
-const HEADERS = {
-  Authorization: `Bearer ${KITSPACE_PROCESSOR_API_KEY}`,
-  Accept: 'application/json',
-}
 
 const MAX_ITERATION = 1000000
 const DELAY_MS = 10
 
-replaceKicadPcbWithSvg()
+loadKicadPcbViewer()
 
-async function replaceKicadPcbWithSvg() {
+async function loadKicadPcbViewer() {
   const [rawUrl, codeBox] = await Promise.all([findRawUrl(), findCodeBox()])
 
   if (rawUrl != null && codeBox != null) {
