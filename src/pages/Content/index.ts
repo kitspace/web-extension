@@ -1,5 +1,8 @@
 import { KITSPACE_PROCESSOR_API_KEY } from 'secrets'
 
+//eslint-disable-next-line no-console
+console.log('content script loaded')
+
 const processorDomain = 'https://processor.master.staging.kitspace.dev'
 
 const headers = {
@@ -7,18 +10,10 @@ const headers = {
   Accept: 'application/json',
 }
 
-async function replaceKicadPcbWithSvg() {
-  const rawButton = document.getElementById('raw-url')
-  if (rawButton == null) {
-    console.error('Kitspace WebExtension could not find "Raw" link')
-    return
-  }
-  const rawUrl = rawButton.getAttribute('href')
-  if (rawUrl == null) {
-    console.error('Kitspace WebExtension could not get `href` from "Raw" link')
-    return
-  }
+replaceKicadPcbWithSvg()
 
+async function replaceKicadPcbWithSvg() {
+  const rawUrl = await findRawUrl()
   const blob = await fetch(rawUrl).then(r => r.blob())
 
   const formData = new FormData()
@@ -55,4 +50,13 @@ async function replaceKicadPcbWithSvg() {
   codeBox.innerHTML = svg
 }
 
-replaceKicadPcbWithSvg()
+/* Finds the raw-url link on a github page. Will never return if it can't find it.*/
+async function findRawUrl() {
+  let href = document.getElementById('raw-url')?.getAttribute('href')
+  while (href == null) {
+    // wait 10ms to be a less CPU intensive loop (in case it never finds it)
+    await new Promise(resolve => setTimeout(resolve, 10))
+    href = document.getElementById('raw-url')?.getAttribute('href')
+  }
+  return href
+}
