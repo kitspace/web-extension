@@ -6,7 +6,6 @@ import { KicadPcbViewer } from '../../containers/KicadPcbViewer'
 //eslint-disable-next-line no-console
 console.log('Kitspace WebExtension content script loaded')
 
-
 const MAX_ITERATION = 1000000
 const DELAY_MS = 10
 
@@ -20,7 +19,8 @@ async function loadKicadPcbViewer() {
   }
 }
 
-/* Finds the raw-url link on a github page. Will return `undefined` if it can't find it within `MAX_ITERATION` loops.*/
+/* Finds the raw-url link on a github page. Will return `undefined` if it can't
+ * find it within `MAX_ITERATION` loops.*/
 async function findRawUrl() {
   let href
   for (let i = 0; i < MAX_ITERATION; i++) {
@@ -33,7 +33,8 @@ async function findRawUrl() {
   }
 }
 
-/* Finds the "code" area on a github page. Will return `undefined` if it can't find it within `MAX_ITERATION` loops.*/
+/* Finds the "code" area on a github page of a kicad_pcb file. Will return
+ * `undefined` if it can't find it within `MAX_ITERATION` loops.*/
 async function findCodeBox() {
   let codeBox
   for (let i = 0; i < MAX_ITERATION; i++) {
