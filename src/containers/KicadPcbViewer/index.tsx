@@ -2,13 +2,16 @@ import React, { Suspense } from 'react'
 import useSWR from 'swr'
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom'
 import { AutoSizer } from 'react-virtualized'
-import { KITSPACE_PROCESSOR_API_KEY } from 'secrets'
-import { ReactSvgPanZoomLoader } from './ReactSvgPanZoomLoader'
 import { delay } from '../../utils'
+import './KicadPcbViewer.styles.css'
+import { toH } from 'hast-to-hyperscript'
+import { parse as parseSVG } from 'svg-parser'
+import { KITSPACE_PROCESSOR_API_KEY } from '../../../secrets.development.js'
 
 const MAX_ITERATION = 1000000
 
 const PROCESSOR_DOMAIN = 'https://processor.review.staging.kitspace.dev'
+//const PROCESSOR_DOMAIN = 'http://processor.kitspace.test:3000'
 
 const HEADERS = {
   Authorization: `Bearer ${KITSPACE_PROCESSOR_API_KEY}`,
@@ -28,31 +31,32 @@ export function KicadPcbViewer(props: KicadPcbViewerProps) {
 }
 
 function Viewer({ rawUrl }: KicadPcbViewerProps) {
-  const { data } = useSWR(rawUrl, svgFetcher, { suspense: true })
+  const { data: svg } = useSWR(rawUrl, svgFetcher, { suspense: true })
 
-  const { svgXML, svgWidth, svgHeight, viewBox } = data
+  const Viewer = React.useRef(null)
+
+  React.useEffect(() => {
+    setTimeout(() => Viewer.current.fitToViewer(), 0)
+  }, [])
 
   return (
-    <ReactSvgPanZoomLoader
-      svgXML={svgXML}
-      render={(content: React.ReactNode) => {
-        return (
-          <div style={{ width: '100%', height: '100vh' }}>
-            <AutoSizer>
-              {({ width, height }) => {
-                return (
-                  <UncontrolledReactSVGPanZoom width={width} height={height}>
-                    <svg width={svgWidth} height={svgHeight} viewBox={viewBox}>
-                      {content}
-                    </svg>
-                  </UncontrolledReactSVGPanZoom>
-                )
-              }}
-            </AutoSizer>
-          </div>
-        )
-      }}
-    />
+    <div style={{ width: '100%', height: '100vh' }}>
+      <AutoSizer>
+        {({ width, height }) => {
+          return (
+            <>
+              <UncontrolledReactSVGPanZoom
+                ref={Viewer}
+                height={height}
+                width={width}
+              >
+                {svg}
+              </UncontrolledReactSVGPanZoom>
+            </>
+          )
+        }}
+      </AutoSizer>
+    </div>
   )
 }
 
@@ -85,14 +89,18 @@ async function svgFetcher(rawUrl: string) {
 
   const svg = await fetch(svgUrl).then(r => r.text())
 
-  const svgDoc = new DOMParser().parseFromString(svg, 'image/svg+xml')
+  const svgHAST = parseSVG(svg)
 
-  const svgWidth = parseFloat(svgDoc.documentElement.getAttribute('width'))
-  const svgHeight = parseFloat(svgDoc.documentElement.getAttribute('height'))
-  svgDoc.documentElement.removeAttribute('width')
-  svgDoc.documentElement.removeAttribute('height')
-  const viewBox = svgDoc.documentElement.getAttribute('viewBox')
+  return toH(React.createElement, svgHAST)
 
-  const svgXML = svgDoc.documentElement.outerHTML
-  return { svgXML, svgWidth, svgHeight, viewBox }
+  //const svgDoc = new DOMParser().parseFromString(svg, 'image/svg+xml')
+
+  //const svgWidth = parseFloat(svgDoc.documentElement.getAttribute('width'))
+  //const svgHeight = parseFloat(svgDoc.documentElement.getAttribute('height'))
+  //svgDoc.documentElement.removeAttribute('width')
+  //svgDoc.documentElement.removeAttribute('height')
+  //const viewBox = svgDoc.documentElement.getAttribute('viewBox')
+
+  //const svgXML = svgDoc.documentElement.outerHTML
+  //return { svgXML, svgWidth, svgHeight, viewBox }
 }

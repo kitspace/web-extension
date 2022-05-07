@@ -1,0 +1,11 @@
+
+g.layer {
+  stroke: rgba(0, 0, 0, 0.5);
+}
+g.layer.f_cu {
+  stroke: rgba(255, 0, 0, 0.5);
+}
+g.layer.b_cu {
+  stroke: rgba(0, 255, 0, 0.5);
+}
+/* TODO: .b_mask .f_mask .b_paster .f_paste .f_silks .b_silks .edge_cuts */
