@@ -29,15 +29,8 @@ export function KicadPcbViewer(props: KicadPcbViewerProps) {
 
 function Viewer({ rawUrl }: KicadPcbViewerProps) {
   const { data } = useSWR(rawUrl, svgFetcher, { suspense: true })
-  const svgDoc = new DOMParser().parseFromString(data, 'image/svg+xml')
 
-  const svgWidth = parseFloat(svgDoc.documentElement.getAttribute('width'))
-  const svgHeight = parseFloat(svgDoc.documentElement.getAttribute('height'))
-  svgDoc.documentElement.removeAttribute('width')
-  svgDoc.documentElement.removeAttribute('height')
-  const viewBox = svgDoc.documentElement.getAttribute('viewBox')
-
-  const svgXML = svgDoc.documentElement.outerHTML
+  const { svgXML, svgWidth, svgHeight, viewBox } = data
 
   return (
     <ReactSvgPanZoomLoader
@@ -49,7 +42,9 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
               {({ width, height }) => {
                 return (
                   <UncontrolledReactSVGPanZoom width={width} height={height}>
-                    <svg width={svgWidth} height={svgHeight} viewBox={viewBox}>{content}</svg>
+                    <svg width={svgWidth} height={svgHeight} viewBox={viewBox}>
+                      {content}
+                    </svg>
                   </UncontrolledReactSVGPanZoom>
                 )
               }}
@@ -87,7 +82,17 @@ async function svgFetcher(rawUrl: string) {
   }
 
   const svgUrl = `${PROCESSOR_DOMAIN}/processed/files/${id}/images/layout.svg`
-  console.log({ svgUrl })
 
-  return fetch(svgUrl).then(r => r.text())
+  const svg = await fetch(svgUrl).then(r => r.text())
+
+  const svgDoc = new DOMParser().parseFromString(svg, 'image/svg+xml')
+
+  const svgWidth = parseFloat(svgDoc.documentElement.getAttribute('width'))
+  const svgHeight = parseFloat(svgDoc.documentElement.getAttribute('height'))
+  svgDoc.documentElement.removeAttribute('width')
+  svgDoc.documentElement.removeAttribute('height')
+  const viewBox = svgDoc.documentElement.getAttribute('viewBox')
+
+  const svgXML = svgDoc.documentElement.outerHTML
+  return { svgXML, svgWidth, svgHeight, viewBox }
 }
