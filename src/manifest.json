@@ -1,10 +1,12 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Kitspace WebExtension",
   "description": "View PCB files online and automate buying parts from Digikey, Mouser etc.",
   "options_page": "options.html",
-  "background": { "service_worker": "background.bundle.js" },
-  "action": {
+  "background": {
+    "page": "background.html"
+  },
+  "browser_action": {
     "default_popup": "popup.html",
     "default_icon": "icon-34.png"
   },
@@ -18,12 +20,13 @@
       "css": []
     }
   ],
-  "permissions": ["tabs", "webNavigation", "scripting"],
-  "web_accessible_resources": [
-    {
-      "resources": ["content.styles.css", "icon-128.png", "icon-34.png"],
-      "matches": []
-    }
+  "permissions": [
+    "tabs",
+    "webNavigation",
+    "scripting",
+    "https://processor.master.kitspace.dev",
+    "https://github.com/*"
   ],
-  "host_permissions": ["https://processor.master.kitspace.dev", "https://github.com/*"]
+  "web_accessible_resources": ["content.styles.css", "icon-128.png", "icon-34.png"],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
