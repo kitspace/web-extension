@@ -6,7 +6,7 @@ import { delay } from '../../utils'
 import { toH } from 'hast-to-hyperscript'
 import { parse as parseSVG } from 'svg-parser'
 import { KITSPACE_PROCESSOR_API_KEY } from '../../../secrets.development.js'
-import kicadTheme from "./kicadThemeDefault.json"
+import { SvgStyle } from './SvgStyle'
 
 const MAX_ITERATION = 1000000
 
@@ -51,41 +51,24 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
 
   return (
     <div style={{ width: '100%', height: '100vh' }}>
+      <SvgStyle />
       <AutoSizer>
         {({ width, height }) => {
           return (
-            <>
-              <style jsx global>
-                {`
-                  g.kicad_svg_layer {
-                    stroke: white;
-                    fill: white;
-                  }
-                  g.kicad_svg_layer.copper.f {
-                    stroke: rgb(200, 52, 52);
-                    fill: rgb(200, 52, 52);
-                  }
-                  g.kicad_svg_layer.copper.b {
-                    stroke: rgb(77, 127, 196);
-                    fill: rgb(77, 127, 196);
-                  }
-                `}
-              </style>
-              <UncontrolledReactSVGPanZoom
-                ref={Viewer}
-                background="black"
-                customMiniature={() => null}
-                customToolbar={() => null}
-                defaultTool={TOOL_PAN}
-                detectAutoPan={false}
-                height={height}
-                scaleFactorOnWheel={1.3}
-                SVGBackground="black"
-                width={width}
-              >
-                {svg}
-              </UncontrolledReactSVGPanZoom>
-            </>
+            <UncontrolledReactSVGPanZoom
+              ref={Viewer}
+              background="black"
+              customMiniature={() => null}
+              customToolbar={() => null}
+              defaultTool={TOOL_PAN}
+              detectAutoPan={false}
+              height={height}
+              scaleFactorOnWheel={1.3}
+              SVGBackground="black"
+              width={width}
+            >
+              {svg}
+            </UncontrolledReactSVGPanZoom>
           )
         }}
       </AutoSizer>
