@@ -31,7 +31,7 @@ const styleString =
 
 export function SvgStyle() {
   return (
-    <style jsx global>
+    <style global jsx>
       {styleString}
     </style>
   )

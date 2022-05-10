@@ -5,7 +5,7 @@ import { AutoSizer } from 'react-virtualized'
 import { delay } from '../../utils'
 import { toH } from 'hast-to-hyperscript'
 import { parse as parseSVG } from 'svg-parser'
-import { KITSPACE_PROCESSOR_API_KEY } from '../../../secrets.development.js'
+import { KITSPACE_PROCESSOR_API_KEY } from 'secrets'
 import { SvgStyle } from './SvgStyle'
 
 const MAX_ITERATION = 1000000
