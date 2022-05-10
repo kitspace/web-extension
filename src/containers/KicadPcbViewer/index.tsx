@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 import useSWR from 'swr'
-import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom'
+import { TOOL_PAN, UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom'
 import { AutoSizer } from 'react-virtualized'
 import { delay } from '../../utils'
 import './KicadPcbViewer.styles.css'
@@ -34,7 +34,7 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
   let { data: svg, error } = useSWR(rawUrl, svgFetcher, { suspense: true })
 
   if (svg == null) {
-    svg = <svg width={0} height={0} />
+    svg = <svg height={0} width={0} />
   }
 
   React.useEffect(() => {
@@ -54,7 +54,18 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
       <AutoSizer>
         {({ width, height }) => {
           return (
-            <UncontrolledReactSVGPanZoom ref={Viewer} height={height} width={width}>
+            <UncontrolledReactSVGPanZoom
+              ref={Viewer}
+              background="black"
+              customMiniature={() => null}
+              customToolbar={() => null}
+              defaultTool={TOOL_PAN}
+              detectAutoPan={false}
+              height={height}
+              scaleFactorOnWheel={1.3}
+              SVGBackground="black"
+              width={width}
+            >
               {svg}
             </UncontrolledReactSVGPanZoom>
           )
