@@ -8,6 +8,7 @@ import { parse as parseSVG } from 'svg-parser'
 import { KITSPACE_PROCESSOR_API_KEY } from 'secrets'
 import { SvgStyle } from './SvgStyle'
 import { board as kicadTheme } from './kicadThemeDefault.json'
+import { Toolbar } from './Toolbar'
 
 const MAX_ITERATION = 1000000
 
@@ -47,7 +48,7 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
   const Viewer = React.useRef(null)
 
   React.useEffect(() => {
-    setTimeout(() => Viewer.current.fitToViewer(), 0)
+    setTimeout(() => Viewer.current.fitToViewer('center', 'center'), 0)
   }, [svg])
 
   return (
@@ -56,20 +57,25 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
       <AutoSizer>
         {({ width, height }) => {
           return (
-            <UncontrolledReactSVGPanZoom
-              ref={Viewer}
-              background={kicadTheme.background}
-              customMiniature={() => null}
-              customToolbar={() => null}
-              defaultTool={TOOL_PAN}
-              detectAutoPan={false}
-              height={height}
-              scaleFactorOnWheel={1.3}
-              SVGBackground={kicadTheme.background}
-              width={width}
-            >
-              {svg}
-            </UncontrolledReactSVGPanZoom>
+            <>
+              <Toolbar
+                onClickFit={() => Viewer.current.fitToViewer('center', 'center')}
+              />
+              <UncontrolledReactSVGPanZoom
+                ref={Viewer}
+                background={kicadTheme.background}
+                customMiniature={() => null}
+                customToolbar={() => null}
+                defaultTool={TOOL_PAN}
+                detectAutoPan={false}
+                height={height}
+                scaleFactorOnWheel={1.3}
+                SVGBackground={kicadTheme.background}
+                width={width}
+              >
+                {svg}
+              </UncontrolledReactSVGPanZoom>
+            </>
           )
         }}
       </AutoSizer>
