@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { delay } from '../../utils'
 import { KicadPcbViewer } from '../../containers/KicadPcbViewer'
 
@@ -15,7 +15,8 @@ async function loadKicadPcbViewer() {
   const [rawUrl, codeBox] = await Promise.all([findRawUrl(), findCodeBox()])
 
   if (rawUrl != null && codeBox != null) {
-    render(<KicadPcbViewer rawUrl={rawUrl} />, codeBox)
+    const reactRoot = createRoot(codeBox)
+    reactRoot.render(<KicadPcbViewer rawUrl={rawUrl} />)
   }
 }
 
