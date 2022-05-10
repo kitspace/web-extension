@@ -1,0 +1,19 @@
+.toolbar {
+  position: absolute;
+  z-index: 1;
+  right: 10px;
+  top: 10px;
+}
+
+button {
+  background-color: transparent;
+  font-size: 14pt;
+  color: white;
+  cursor: pointer;
+  border: none;
+  fill: grey;
+}
+
+button:hover {
+  fill: white;
+}

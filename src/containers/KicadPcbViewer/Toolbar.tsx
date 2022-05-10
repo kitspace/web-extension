@@ -1,29 +1,13 @@
-import React, { MouseEventHandler } from 'react'
+import React from 'react'
+import './Toolbar.css'
 
 export interface ToolbarProps {
-  onClickFit: MouseEventHandler<HTMLButtonElement>
+  onClickFit: React.MouseEventHandler<HTMLButtonElement>
 }
 
 export function Toolbar({ onClickFit }: ToolbarProps) {
   return (
-    <div>
-      <style jsx>{`
-        position: absolute;
-        z-index: 1;
-        right: 10px;
-        top: 10px;
-        button {
-          background-color: transparent;
-          font-size: 14pt;
-          color: white;
-          cursor: pointer;
-          border: none;
-          fill: grey;
-        }
-        button:hover {
-          fill: white;
-        }
-      `}</style>
+    <div className="toolbar">
       <button aria-label="Fit to view" onClick={onClickFit}>
         <Icon />
       </button>
