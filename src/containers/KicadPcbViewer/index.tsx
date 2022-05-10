@@ -3,8 +3,9 @@ import useSWR from 'swr'
 import { TOOL_PAN, UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom'
 import { AutoSizer } from 'react-virtualized'
 import { delay } from '../../utils'
-import { toH } from 'hast-to-hyperscript'
+import { toH, Element } from 'hast-to-hyperscript'
 import { parse as parseSVG } from 'svg-parser'
+import { fromDom } from 'hast-util-from-dom'
 import { KITSPACE_PROCESSOR_API_KEY } from 'secrets'
 import { SvgStyle } from './SvgStyle'
 import { Toolbar } from './Toolbar'
@@ -22,11 +23,24 @@ const HEADERS = {
 
 export interface KicadPcbViewerProps {
   rawUrl: string
+  initialDom?: HTMLElement
 }
 
 export function KicadPcbViewer(props: KicadPcbViewerProps) {
+  let fallback = <div>Loading...</div>
+  // use the html we are replacing in the fallback if we have it
+  if (props.initialDom) {
+    const hast = fromDom(props.initialDom)
+    const initial = toH(React.createElement, hast as Element)
+    fallback = (
+      <div>
+        <div>Loading...</div>
+        {initial}
+      </div>
+    )
+  }
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={fallback}>
       <Viewer {...props} />
     </Suspense>
   )
