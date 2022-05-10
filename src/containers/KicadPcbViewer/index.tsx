@@ -54,15 +54,9 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
       <AutoSizer>
         {({ width, height }) => {
           return (
-            <>
-              <UncontrolledReactSVGPanZoom
-                ref={Viewer}
-                height={height}
-                width={width}
-              >
-                {svg}
-              </UncontrolledReactSVGPanZoom>
-            </>
+            <UncontrolledReactSVGPanZoom ref={Viewer} height={height} width={width}>
+              {svg}
+            </UncontrolledReactSVGPanZoom>
           )
         }}
       </AutoSizer>
