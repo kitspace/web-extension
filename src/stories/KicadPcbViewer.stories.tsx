@@ -13,6 +13,12 @@ export function Ulx3s() {
   )
 }
 
+export function Ruler() {
+  return (
+    <KicadPcbViewer rawUrl="https://raw.githubusercontent.com/kitspace/ruler/master/ruler.kicad_pcb" />
+  )
+}
+
 const meta = {
   title: 'KicadPcbViewer',
 }
