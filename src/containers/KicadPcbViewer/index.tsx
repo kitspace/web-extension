@@ -7,8 +7,8 @@ import { toH } from 'hast-to-hyperscript'
 import { parse as parseSVG } from 'svg-parser'
 import { KITSPACE_PROCESSOR_API_KEY } from 'secrets'
 import { SvgStyle } from './SvgStyle'
-import { board as kicadTheme } from './kicadThemeDefault.json'
 import { Toolbar } from './Toolbar'
+import kicadTheme from './kicadThemeDefault.json'
 
 const MAX_ITERATION = 1000000
 
@@ -63,14 +63,14 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
               />
               <UncontrolledReactSVGPanZoom
                 ref={Viewer}
-                background={kicadTheme.background}
+                background={kicadTheme.board.background}
                 customMiniature={() => null}
                 customToolbar={() => null}
                 defaultTool={TOOL_PAN}
                 detectAutoPan={false}
                 height={height}
                 scaleFactorOnWheel={1.3}
-                SVGBackground={kicadTheme.background}
+                SVGBackground={kicadTheme.board.background}
                 width={width}
               >
                 {svg}

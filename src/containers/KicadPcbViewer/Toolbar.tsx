@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { MouseEventHandler } from 'react'
 
 export interface ToolbarProps {
-  onClickFit: Function
+  onClickFit: MouseEventHandler<HTMLButtonElement>
 }
 
 export function Toolbar({ onClickFit }: ToolbarProps) {

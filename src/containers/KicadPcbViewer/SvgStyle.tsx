@@ -1,5 +1,5 @@
 import React from 'react'
-import { board as kicadTheme } from './kicadThemeDefault.json'
+import kicadTheme from './kicadThemeDefault.json'
 
 const styleString =
   `g.kicad_svg_layer {
@@ -7,23 +7,23 @@ const styleString =
      fill: white;
    }
    ` +
-  Object.keys(kicadTheme)
+  Object.keys(kicadTheme.board)
     .filter(key => key !== 'copper')
     .map(
       key => `
           g.kicad_svg_layer.${key} {
-            stroke: ${kicadTheme[key]};
-            fill: ${kicadTheme[key]};
+            stroke: ${kicadTheme.board[key]};
+            fill: ${kicadTheme.board[key]};
           }
           `,
     )
     .join('') +
-  Object.keys(kicadTheme.copper)
+  Object.keys(kicadTheme.board.copper)
     .map(
       key => `
          g.kicad_svg_layer.copper.${key} {
-           stroke: ${kicadTheme.copper[key]};
-           fill: ${kicadTheme.copper[key]};
+           stroke: ${kicadTheme.board.copper[key]};
+           fill: ${kicadTheme.board.copper[key]};
          }
          `,
     )
