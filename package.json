@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "hast-to-hyperscript": "^10.0.1",
-    "hast-util-from-dom": "^4.1.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-hot-loader": "^4.13.0",

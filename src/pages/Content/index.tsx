@@ -8,6 +8,7 @@ console.log('Kitspace WebExtension content script loaded')
 
 const MAX_ITERATION = 1000000
 const DELAY_MS = 10
+const IS_VIEWER = 'data-kitspace-kicad-viewer-root'
 
 loadKicadPcbViewer()
 
@@ -15,8 +16,16 @@ async function loadKicadPcbViewer() {
   const [rawUrl, codeBox] = await Promise.all([findRawUrl(), findCodeBox()])
 
   if (rawUrl != null && codeBox != null) {
+    // due to use of onHistoryStateUpdated our content script can get loaded more
+    // than once on the same page. we ensure we don't ever re-mount our react
+    // app on on the same root twice by giving it a special attribute
+    if (codeBox.getAttribute(IS_VIEWER)) {
+      return
+    }
+    codeBox.setAttribute(IS_VIEWER, true)
+    const initialHtml = codeBox.innerHTML
     const reactRoot = createRoot(codeBox)
-    reactRoot.render(<KicadPcbViewer initialDom={codeBox} rawUrl={rawUrl} />)
+    reactRoot.render(<KicadPcbViewer initialHtml={initialHtml} rawUrl={rawUrl} />)
   }
 }
 

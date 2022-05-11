@@ -3,9 +3,8 @@ import useSWR from 'swr'
 import { TOOL_PAN, UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom'
 import { AutoSizer } from 'react-virtualized'
 import { delay } from '../../utils'
-import { toH, Element } from 'hast-to-hyperscript'
+import { toH } from 'hast-to-hyperscript'
 import { parse as parseSVG } from 'svg-parser'
-import { fromDom } from 'hast-util-from-dom'
 import { KITSPACE_PROCESSOR_API_KEY } from 'secrets'
 import { SvgStyle } from './SvgStyle'
 import { Toolbar } from './Toolbar'
@@ -24,23 +23,19 @@ const HEADERS = {
 
 export interface KicadPcbViewerProps {
   rawUrl: string
-  initialDom?: HTMLElement
+  initialHtml?: string
 }
 
 export function KicadPcbViewer(props: KicadPcbViewerProps) {
-  let initial = null
+  let fallback = null
   // use the html we are replacing in the fallback if we have it
-  // it's ok to do the parsing here and block react rendering (instead of e.g.
-  // in a `useEffect`) because we don't really want to replace the original unless we are
-  // ready to render
-  if (props.initialDom) {
-    const hast = fromDom(props.initialDom)
-    initial = toH(React.createElement, hast as Element)
+  if (props.initialHtml) {
+    fallback = <div dangerouslySetInnerHTML={{ __html: props.initialHtml }} />
   }
   return (
     <IndicatorProvider>
       <Indicator />
-      <Suspense fallback={<IndicatorFallback>{initial}</IndicatorFallback>}>
+      <Suspense fallback={<IndicatorFallback>{fallback}</IndicatorFallback>}>
         <Viewer {...props} />
       </Suspense>
     </IndicatorProvider>
@@ -63,7 +58,7 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
   const Viewer = React.useRef(null)
 
   React.useEffect(() => {
-    setTimeout(() => Viewer.current.fitToViewer('center', 'center'), 0)
+    setTimeout(() => Viewer.current?.fitToViewer('center', 'center'), 0)
   }, [svg])
 
   return (
@@ -74,7 +69,7 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
           return (
             <>
               <Toolbar
-                onClickFit={() => Viewer.current.fitToViewer('center', 'center')}
+                onClickFit={() => Viewer.current?.fitToViewer('center', 'center')}
               />
               <UncontrolledReactSVGPanZoom
                 ref={Viewer}
