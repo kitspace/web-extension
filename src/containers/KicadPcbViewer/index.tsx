@@ -51,6 +51,10 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
   const { setPercent } = React.useContext(IndicatorContext)
   let { data: svg, error } = useSWR(rawUrl, url => svgFetcher(url, setPercent), {
     suspense: true,
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnMount: false,
+    revalidateOnReconnect: false,
   })
 
   if (svg == null) {
