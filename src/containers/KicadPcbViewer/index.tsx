@@ -83,14 +83,20 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
               />
             )
           }
-          return <SvgPanZoom width={width} height={height} svg={svg} />
+          return <SvgPanZoom height={height} svg={svg} width={width} />
         }}
       </AutoSize>
     </div>
   )
 }
 
-function SvgPanZoom(props) {
+interface SvgPanZoomProps {
+  width: number
+  height: number
+  svg: React.ReactElement
+}
+
+function SvgPanZoom(props: SvgPanZoomProps) {
   const Viewer = React.useRef(null)
   React.useEffect(() => {
     Viewer.current?.fitToViewer('center', 'center')
