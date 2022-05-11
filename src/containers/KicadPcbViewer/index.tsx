@@ -68,7 +68,7 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
       <AutoSize>
         {({ width, height }) => {
           // seems to happen while loading
-          if (svg == null || width === 0 || height === 0) {
+          if (width === 0 || height === 0) {
             return (
               <div
                 style={{
