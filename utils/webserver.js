@@ -3,9 +3,11 @@ process.env.BABEL_ENV = 'development'
 process.env.NODE_ENV = 'development'
 process.env.ASSET_PATH = '/'
 
+const configVersion = process.argv[2] === "v2" ? 0 : 1
+
 var WebpackDevServer = require('webpack-dev-server'),
   webpack = require('webpack'),
-  config = require('../webpack.config'),
+  config = require('../webpack.config')[configVersion],
   env = require('./env'),
   path = require('path')
 
