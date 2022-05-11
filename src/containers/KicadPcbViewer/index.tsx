@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react'
 import useSWR from 'swr'
 import { TOOL_PAN, UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom'
-import { AutoSizer } from 'react-virtualized'
+import { AutoSize } from 'react-autosize-container'
 import { delay } from '../../utils'
 import { toH } from 'hast-to-hyperscript'
 import { parse as parseSVG } from 'svg-parser'
@@ -63,41 +63,54 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
     }
   }, [error])
 
-  const Viewer = React.useRef(null)
-
-  React.useEffect(() => {
-    setTimeout(() => Viewer.current?.fitToViewer('center', 'center'), 0)
-  }, [svg])
-
   return (
     <div style={{ width: '100%', height: '100vh' }}>
-      <SvgStyle />
-      <AutoSizer>
+      <AutoSize>
         {({ width, height }) => {
-          return (
-            <>
-              <Toolbar
-                onClickFit={() => Viewer.current?.fitToViewer('center', 'center')}
+          // seems to happen while loading
+          if (width === 0 || height === 0) {
+            return (
+              <div
+                style={{
+                  width: '100%',
+                  height: '100vh',
+                  background: kicadTheme.board.background,
+                }}
               />
-              <UncontrolledReactSVGPanZoom
-                ref={Viewer}
-                background={kicadTheme.board.background}
-                customMiniature={() => null}
-                customToolbar={() => null}
-                defaultTool={TOOL_PAN}
-                detectAutoPan={false}
-                height={height}
-                scaleFactorOnWheel={1.3}
-                SVGBackground={kicadTheme.board.background}
-                width={width}
-              >
-                {svg}
-              </UncontrolledReactSVGPanZoom>
-            </>
-          )
+            )
+          }
+          return <SvgPanZoom width={width} height={height} svg={svg} />
         }}
-      </AutoSizer>
+      </AutoSize>
     </div>
+  )
+}
+
+function SvgPanZoom(props) {
+  const Viewer = React.useRef(null)
+  React.useEffect(() => {
+    Viewer.current?.fitToViewer('center', 'center')
+  }, [props.svg])
+
+  return (
+    <>
+      <SvgStyle />
+      <Toolbar onClickFit={() => Viewer.current?.fitToViewer('center', 'center')} />
+      <UncontrolledReactSVGPanZoom
+        ref={Viewer}
+        background={kicadTheme.board.background}
+        customMiniature={() => null}
+        customToolbar={() => null}
+        defaultTool={TOOL_PAN}
+        detectAutoPan={false}
+        height={props.height}
+        scaleFactorOnWheel={1.3}
+        SVGBackground={kicadTheme.board.background}
+        width={props.width}
+      >
+        {props.svg}
+      </UncontrolledReactSVGPanZoom>
+    </>
   )
 }
 
