@@ -13,7 +13,10 @@ const IS_VIEWER = 'data-kitspace-kicad-viewer-root'
 loadKicadPcbViewer()
 
 async function loadKicadPcbViewer() {
-  const [rawUrl, codeBox] = await Promise.all([findRawUrl(), findCodeBox()])
+  const [rawUrl, { codeBox, isShowingCode }] = await Promise.all([
+    findRawUrl(),
+    findCodeBox(),
+  ])
 
   if (rawUrl != null && codeBox != null) {
     // due to use of onHistoryStateUpdated our content script can get loaded more
@@ -23,7 +26,9 @@ async function loadKicadPcbViewer() {
       return
     }
     codeBox.setAttribute(IS_VIEWER, true)
-    const initialHtml = codeBox.innerHTML
+    // if there is code in the codeBox register it as our initialHtml to leave
+    // it in place while our app loads
+    const initialHtml = isShowingCode ? codeBox.innerHTML : null
     const reactRoot = createRoot(codeBox)
     reactRoot.render(<KicadPcbViewer initialHtml={initialHtml} rawUrl={rawUrl} />)
   }
@@ -48,11 +53,11 @@ async function findRawUrl() {
 async function findCodeBox() {
   let codeBox
   for (let i = 0; i < MAX_ITERATION; i++) {
-    codeBox =
-      document.querySelector('.data.type-kicad-layout') ||
-      document.querySelector('.data.type-text')
+    const kicadLayout = document.querySelector('.data.type-kicad-layout')
+    const text = document.querySelector('.data.type-text')
+    codeBox = kicadLayout || text
     if (codeBox != null) {
-      return codeBox
+      return { codeBox, isShowingCode: kicadLayout != null }
     }
     // delay to be a less CPU intensive loop
     await delay(DELAY_MS)

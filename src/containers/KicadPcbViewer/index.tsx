@@ -32,7 +32,7 @@ export interface KicadPcbViewerProps {
 }
 
 export function KicadPcbViewer(props: KicadPcbViewerProps) {
-  let fallback = null
+  let fallback = <EmptyViewer />
   // use the html we are replacing in the fallback if we have it
   if (props.initialHtml) {
     fallback = <div dangerouslySetInnerHTML={{ __html: props.initialHtml }} />
@@ -69,15 +69,7 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
         {({ width, height }) => {
           // seems to happen while loading
           if (width === 0 || height === 0) {
-            return (
-              <div
-                style={{
-                  width: '100%',
-                  height: '100vh',
-                  background: kicadTheme.board.background,
-                }}
-              />
-            )
+            return <EmptyViewer />
           }
           return <SvgPanZoom height={height} svg={svg} width={width} />
         }}
@@ -181,4 +173,16 @@ async function svgFetcher(rawUrl: string, setPercent) {
     console.error(e)
     throw e
   }
+}
+
+function EmptyViewer() {
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100vh',
+        background: kicadTheme.board.background,
+      }}
+    />
+  )
 }
