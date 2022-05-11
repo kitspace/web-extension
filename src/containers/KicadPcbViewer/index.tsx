@@ -8,12 +8,7 @@ import { parse as parseSVG } from 'svg-parser'
 import { KITSPACE_PROCESSOR_API_KEY } from 'secrets'
 import { SvgStyle } from './SvgStyle'
 import { Toolbar } from './Toolbar'
-import {
-  Indicator,
-  IndicatorContext,
-  IndicatorFallback,
-  IndicatorProvider,
-} from './Indicator'
+import { Indicator, IndicatorContext, IndicatorProvider } from './Indicator'
 import kicadTheme from './kicadThemeDefault.json'
 
 const MAX_ITERATION = 1000000
@@ -40,7 +35,7 @@ export function KicadPcbViewer(props: KicadPcbViewerProps) {
   return (
     <IndicatorProvider>
       <Indicator />
-      <Suspense fallback={<IndicatorFallback>{fallback}</IndicatorFallback>}>
+      <Suspense fallback={fallback}>
         <Viewer {...props} />
       </Suspense>
     </IndicatorProvider>
@@ -85,6 +80,13 @@ interface SvgPanZoomProps {
 }
 
 function SvgPanZoom(props: SvgPanZoomProps) {
+  const { setActive } = React.useContext(IndicatorContext)
+  React.useEffect(() => {
+    if (props.width > 0 && props.height > 0) {
+      setActive(false)
+    }
+  }, [props.width, props.height, setActive])
+
   const Viewer = React.useRef(null)
   React.useEffect(() => {
     Viewer.current?.fitToViewer('center', 'center')
@@ -145,26 +147,14 @@ async function svgFetcher(rawUrl: string, setPercent) {
       }
       await delay(10)
     }
-    setPercent(90)
+    setPercent(99)
 
     const svgUrl = `${PROCESSOR_DOMAIN}/processed/files/${id}/images/layout.svg`
 
     const svg = await fetch(svgUrl).then(r => r.text())
-    setPercent(91)
 
     const svgHAST = parseSVG(svg)
-    setPercent(92)
-
     const element = toH(React.createElement, svgHAST)
-    setPercent(93)
-
-    setTimeout(() => {
-      setPercent(95)
-    }, 500)
-
-    setTimeout(() => {
-      setPercent(99.99)
-    }, 3000)
 
     return element
   } catch (e) {

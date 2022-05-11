@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useContext,
-  useMemo,
-  useEffect,
-  createContext,
-} from 'react'
+import React, { useState, useContext, useMemo, createContext } from 'react'
 import Progress from 'react-progress'
 
 export interface IndicatorContextProps {
@@ -20,7 +14,7 @@ export interface IndicatorProviderProps {
   children: React.ReactNode | React.ReactNode[]
 }
 export function IndicatorProvider({ children }: IndicatorProviderProps) {
-  const [active, setActive] = useState(false)
+  const [active, setActive] = useState(true)
   const [percent, setPercent] = useState(0)
   const value = useMemo(
     () => ({ active, setActive, percent, setPercent }),
@@ -34,19 +28,9 @@ export function IndicatorProvider({ children }: IndicatorProviderProps) {
 export function Indicator() {
   const { active, percent } = useContext(IndicatorContext)
   return active ? (
-    <Progress percent={percent} style={{ position: 'absolute', top: 45 }} />
+    <Progress
+      percent={percent}
+      style={{ height: 5, position: 'absolute', top: 45 }}
+    />
   ) : null
-}
-
-export interface IndicatorProps {
-  children: JSX.Element
-}
-
-export function IndicatorFallback({ children }: IndicatorProps) {
-  const { setActive } = useContext(IndicatorContext)
-  useEffect(() => {
-    setActive(true)
-    return () => setActive(false)
-  })
-  return children
 }
