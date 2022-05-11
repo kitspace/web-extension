@@ -30,9 +30,5 @@ const styleString =
     .join('')
 
 export function SvgStyle() {
-  return (
-    <style global jsx>
-      {styleString}
-    </style>
-  )
+  return <style dangerouslySetInnerHTML={{ __html: styleString }} />
 }
