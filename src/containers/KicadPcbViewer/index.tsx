@@ -57,10 +57,6 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
     revalidateOnReconnect: false,
   })
 
-  if (svg == null) {
-    svg = <svg height={0} width={0} />
-  }
-
   React.useEffect(() => {
     if (error) {
       console.error(error)
@@ -72,7 +68,7 @@ function Viewer({ rawUrl }: KicadPcbViewerProps) {
       <AutoSize>
         {({ width, height }) => {
           // seems to happen while loading
-          if (width === 0 || height === 0) {
+          if (svg == null || width === 0 || height === 0) {
             return (
               <div
                 style={{
