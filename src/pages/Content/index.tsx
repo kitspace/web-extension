@@ -16,7 +16,7 @@ async function loadKicadPcbViewer() {
 
   if (rawUrl != null && codeBox != null) {
     const reactRoot = createRoot(codeBox)
-    reactRoot.render(<KicadPcbViewer rawUrl={rawUrl} initialDom={codeBox} />)
+    reactRoot.render(<KicadPcbViewer initialDom={codeBox} rawUrl={rawUrl} />)
   }
 }
 

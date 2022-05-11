@@ -23,6 +23,7 @@
     "react-dom": "^18.1.0",
     "react-hot-loader": "^4.13.0",
     "react-inlinesvg": "^3.0.0",
+    "react-progress": "^0.0.12",
     "react-svg-pan-zoom": "^3.11.0",
     "react-virtualized": "^9.22.3",
     "styled-jsx": "^5.0.2",

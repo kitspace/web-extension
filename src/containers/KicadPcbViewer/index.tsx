@@ -9,6 +9,7 @@ import { fromDom } from 'hast-util-from-dom'
 import { KITSPACE_PROCESSOR_API_KEY } from 'secrets'
 import { SvgStyle } from './SvgStyle'
 import { Toolbar } from './Toolbar'
+import { IndicatorProvider, Indicator, IndicatorFallback } from './Indicator'
 import kicadTheme from './kicadThemeDefault.json'
 
 const MAX_ITERATION = 1000000
@@ -27,22 +28,22 @@ export interface KicadPcbViewerProps {
 }
 
 export function KicadPcbViewer(props: KicadPcbViewerProps) {
-  let fallback = <div>Loading...</div>
+  let initial = null
   // use the html we are replacing in the fallback if we have it
+  // it's ok to do the parsing here and block react rendering (instead of e.g.
+  // in a `useEffect`) because we don't really want to replace the original unless we are
+  // ready to render
   if (props.initialDom) {
     const hast = fromDom(props.initialDom)
-    const initial = toH(React.createElement, hast as Element)
-    fallback = (
-      <div>
-        <div>Loading...</div>
-        {initial}
-      </div>
-    )
+    initial = toH(React.createElement, hast as Element)
   }
   return (
-    <Suspense fallback={fallback}>
-      <Viewer {...props} />
-    </Suspense>
+    <IndicatorProvider>
+      <Indicator />
+      <Suspense fallback={<IndicatorFallback>{initial}</IndicatorFallback>}>
+        <Viewer {...props} />
+      </Suspense>
+    </IndicatorProvider>
   )
 }
 
