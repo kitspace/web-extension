@@ -28,9 +28,15 @@ export interface KicadPcbViewerProps {
 
 export function KicadPcbViewer(props: KicadPcbViewerProps) {
   let fallback = <EmptyViewer />
-  // use the html we are replacing in the fallback if we have it
+  // use the html we are replacing (i.e. the kicad_pcb text view) in the
+  // fallback while loading, if we have it
   if (props.initialHtml) {
-    fallback = <div dangerouslySetInnerHTML={{ __html: props.initialHtml }} />
+    fallback = (
+      <div
+        dangerouslySetInnerHTML={{ __html: props.initialHtml }}
+        style={{ marginTop: 7 }}
+      />
+    )
   }
   return (
     <IndicatorProvider>
