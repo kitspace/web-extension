@@ -13,7 +13,7 @@ import kicadTheme from './kicadThemeDefault.json'
 
 const MAX_ITERATION = 1000000
 
-const PROCESSOR_DOMAIN = 'https://processor.review.staging.kitspace.dev'
+const PROCESSOR_DOMAIN = 'https://processor.master.staging.kitspace.dev'
 //const PROCESSOR_DOMAIN = 'http://processor.kitspace.test:3000'
 
 const HEADERS = {
