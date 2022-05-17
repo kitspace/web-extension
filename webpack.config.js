@@ -1,18 +1,13 @@
 const webpack = require('webpack')
 const path = require('path')
 const fileSystem = require('fs-extra')
-const env = require('./utils/env')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 const ASSET_PATH = process.env.ASSET_PATH || '/'
-
-const alias = {}
-
-// load the secrets
-const secretsPath = path.join(__dirname, 'secrets.' + env.NODE_ENV + '.js')
+const NODE_ENV = process.env.NODE_ENV || 'development'
 
 const fileExtensions = [
   'jpg',
@@ -27,6 +22,8 @@ const fileExtensions = [
   'woff2',
 ]
 
+const alias = {}
+const secretsPath = path.join(__dirname, `secrets.${NODE_ENV}.js`)
 if (fileSystem.existsSync(secretsPath)) {
   alias['secrets'] = secretsPath
 }
@@ -35,15 +32,12 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
   const outputDir = path.resolve(__dirname, 'build', manifestVersion)
   const option = {
     name: manifestVersion,
-    mode: process.env.NODE_ENV || 'development',
+    mode: NODE_ENV,
     entry: {
       options: path.join(__dirname, 'src', 'pages', 'Options', 'index.tsx'),
       background: path.join(__dirname, 'src', 'pages', 'Background', 'index.ts'),
       contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.tsx'),
       popup: path.join(__dirname, 'src', 'pages', 'Popup', 'index.tsx'),
-    },
-    chromeExtensionBoilerplate: {
-      notHotReload: ['background', 'contentScript'],
     },
     output: {
       filename: '[name].bundle.js',
@@ -206,7 +200,7 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
       }),
     )
   }
-  if (env.NODE_ENV === 'development') {
+  if (NODE_ENV === 'development') {
     option.devtool = 'cheap-module-source-map'
   } else {
     option.optimization = {

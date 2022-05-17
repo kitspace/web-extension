@@ -8,8 +8,8 @@
     "url": "https://github.com/lxieyang/chrome-extension-boilerplate-react.git"
   },
   "scripts": {
-    "build": "node utils/build.js",
-    "dev": "node utils/webserver.js",
+    "build": "NODE_ENV=production webpack build",
+    "dev": "NODE_ENV=development webpack --watch",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "tsc": "tsc --noEmit",
     "fmt": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}' '!build/*'",
