@@ -3,8 +3,10 @@ process.env.BABEL_ENV = 'production'
 process.env.NODE_ENV = 'production'
 process.env.ASSET_PATH = '/'
 
-var webpack = require('webpack'),
-  config = require('../webpack.config')
+const configVersion = process.argv[2] === 'v2' ? 0 : 1
+
+const webpack = require('webpack')
+const config = require('../webpack.config')[configVersion]
 
 delete config.chromeExtensionBoilerplate
 
