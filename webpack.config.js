@@ -45,6 +45,10 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
       clean: true,
       publicPath: ASSET_PATH,
     },
+    performance: {
+      maxEntrypointSize: 512000 /* bytes */,
+      maxAssetSize: 512000 /* bytes */,
+    },
     module: {
       rules: [
         {
