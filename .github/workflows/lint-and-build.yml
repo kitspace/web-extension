@@ -18,3 +18,4 @@ jobs:
       - run: yarn lint --max-warnings 0
       - run: yarn tsc
       - run: yarn build
+      - run: yarn web-ext lint
