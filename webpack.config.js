@@ -142,8 +142,7 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
                   (result, r) => result.concat(r.resources),
                   [],
                 ),
-                content_security_policy:
-                  "script-src 'self' 'unsafe-eval'; object-src 'self'",
+                content_security_policy: "script-src 'self'; object-src 'self'",
               }
               return Buffer.from(JSON.stringify(v2))
             },
