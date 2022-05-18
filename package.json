@@ -12,7 +12,7 @@
     "dev": "NODE_ENV=development node utils/webserver.js",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "tsc": "tsc --noEmit",
-    "fmt": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}' '!build/*'",
+    "fmt": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}' '!build/**/*'",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
