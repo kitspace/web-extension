@@ -1,4 +1,4 @@
-const myProjectConfig = require('../webpack.config')
+const myProjectConfig = require('../webpack.config')[0]
 
 module.exports = {
   webpackFinal: config => {

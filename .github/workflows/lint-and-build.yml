@@ -13,7 +13,8 @@ jobs:
           node-version: '16'
 
       - uses: actions/checkout@v2
-      - run: 'yarn install'
-      - run: 'yarn lint --max-warnings 0'
-      - run: 'yarn tsc'
-      - run: 'yarn build'
+      - run: yarn install
+      - run: echo "export const KITSPACE_PROCESSOR_API_KEY = 'fake_key'" > secrets.production.js
+      - run: yarn lint --max-warnings 0
+      - run: yarn tsc
+      - run: yarn build
