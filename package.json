@@ -11,23 +11,39 @@
     "build": "node utils/build.js",
     "dev": "node utils/webserver.js",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
-    "tsc": "tsc",
-    "fmt": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}' '!build/*'"
+    "tsc": "tsc --noEmit",
+    "fmt": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}' '!build/*'",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "@hot-loader/react-dom": "^17.0.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-hot-loader": "^4.13.0"
+    "hast-to-hyperscript": "^10.0.1",
+    "react": "^18.1.0",
+    "react-autosize-container": "^1.0.8",
+    "react-dom": "^18.1.0",
+    "react-hot-loader": "^4.13.0",
+    "react-inlinesvg": "^3.0.0",
+    "react-progress": "^0.0.12",
+    "react-svg-pan-zoom": "^3.11.0",
+    "svg-parser": "^2.0.4",
+    "swr": "^1.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
-    "@types/chrome": "^0.0.177",
-    "@types/react": "^17.0.39",
-    "@types/react-dom": "^17.0.11",
+    "@storybook/addon-actions": "^6.4.22",
+    "@storybook/addon-essentials": "^6.4.22",
+    "@storybook/addon-interactions": "^6.4.22",
+    "@storybook/addon-links": "^6.4.22",
+    "@storybook/react": "^6.4.22",
+    "@storybook/testing-library": "^0.0.11",
+    "@types/chrome": "^0.0.184",
+    "@types/react": "^18.0.8",
+    "@types/react-dom": "^18.0.3",
+    "@types/react-svg-pan-zoom": "^3.3.5",
+    "@types/react-virtualized": "^9.21.21",
     "@types/webpack-env": "^1.16.3",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.3",
@@ -52,6 +68,7 @@
     "prettier": "^2.5.1",
     "sass-loader": "^12.4.0",
     "source-map-loader": "^3.0.1",
+    "storybook": "^6.4.22",
     "style-loader": "^3.3.1",
     "terser-webpack-plugin": "^5.3.1",
     "ts-loader": "^9.2.6",
@@ -59,5 +76,11 @@
     "webpack": "^5.68.0",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.7.4"
+  },
+  "resolutions": {
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "@types/react": "^18.0.8",
+    "@types/react-dom": "^18.0.3"
   }
 }

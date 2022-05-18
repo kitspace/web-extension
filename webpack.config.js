@@ -9,12 +9,10 @@ var { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 const ASSET_PATH = process.env.ASSET_PATH || '/'
 
-var alias = {
-  'react-dom': '@hot-loader/react-dom',
-}
+var alias = {}
 
 // load the secrets
-var secretsPath = path.join(__dirname, 'secrets.' + env.NODE_ENV + '.ts')
+var secretsPath = path.join(__dirname, 'secrets.' + env.NODE_ENV + '.js')
 
 var fileExtensions = [
   'jpg',
@@ -38,7 +36,7 @@ var options = {
   entry: {
     options: path.join(__dirname, 'src', 'pages', 'Options', 'index.tsx'),
     background: path.join(__dirname, 'src', 'pages', 'Background', 'index.ts'),
-    contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.ts'),
+    contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.tsx'),
     popup: path.join(__dirname, 'src', 'pages', 'Popup', 'index.tsx'),
   },
   chromeExtensionBoilerplate: {
@@ -167,6 +165,12 @@ var options = {
       template: path.join(__dirname, 'src', 'pages', 'Popup', 'index.html'),
       filename: 'popup.html',
       chunks: ['popup'],
+      cache: false,
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'src', 'pages', 'Background', 'index.html'),
+      filename: 'background.html',
+      chunks: ['background'],
       cache: false,
     }),
   ],
