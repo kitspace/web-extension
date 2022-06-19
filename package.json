@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "NODE_ENV=production webpack build",
+    "test": "playwright test",
     "dev": "NODE_ENV=development node utils/webserver.js",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "web-ext": "web-ext --source-dir=build/manifest-v2",
@@ -34,6 +35,7 @@
     "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
+    "@playwright/test": "^1.22.2",
     "@storybook/addon-actions": "^6.4.22",
     "@storybook/addon-essentials": "^6.4.22",
     "@storybook/addon-interactions": "^6.4.22",
@@ -66,6 +68,7 @@
     "html-loader": "^3.1.0",
     "html-webpack-plugin": "^5.5.0",
     "node-sass": "^6.0.1",
+    "playwright": "^1.22.2",
     "prettier": "^2.5.1",
     "sass-loader": "^12.4.0",
     "source-map-loader": "^3.0.1",
