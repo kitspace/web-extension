@@ -15,8 +15,7 @@ export const test = base.extend<{ context: BrowserContext; extensionId: string }
 
     // mouser will block us if we don't hide that the browser is automated
     await context.addInitScript({
-      content:
-        "Object.defineProperty(navigator, 'webdriver', { get: () => false })",
+      path: path.join(__dirname, 'fixtures/stealth.js'),
     })
 
     await use(context)
