@@ -13,6 +13,9 @@ export const test = base.extend<{ context: BrowserContext; extensionId: string }
       ],
     })
 
+    // block our analytics
+    await context.route('https://plausible.io/**/*', route => route.abort());
+
     // mouser will block us if we don't hide that the browser is automated
     await context.addInitScript({
       path: path.join(__dirname, 'fixtures/stealth.js'),
