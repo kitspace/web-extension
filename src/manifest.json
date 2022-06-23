@@ -16,6 +16,11 @@
       "matches": ["https://github.com/*/blob/*.kicad_pcb"],
       "js": ["contentScript.bundle.js"],
       "css": []
+    },
+    {
+      "matches": ["https://kitspace.org/*"],
+      "js": ["kitspaceContentScript.bundle.js"],
+      "css": []
     }
   ],
   "permissions": ["tabs", "webNavigation", "scripting"],

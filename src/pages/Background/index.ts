@@ -9,3 +9,12 @@ chrome.webNavigation?.onHistoryStateUpdated.addListener(
   },
   { url: [{ urlMatches: 'https://github.com/.*?/blob/.*?.kicad_pcb$' }] },
 )
+
+chrome.webNavigation?.onHistoryStateUpdated.addListener(
+  ({ tabId }) => {
+    chrome.tabs.executeScript(tabId, {
+      file: 'kitspaceContentScript.bundle.js',
+    })
+  },
+  { url: [{ urlMatches: 'https://kitspace.org/*' }] },
+)

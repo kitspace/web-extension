@@ -11,7 +11,11 @@ var WebpackDevServer = require('webpack-dev-server'),
   env = require('./env'),
   path = require('path')
 
-var excludeEntriesToHotReload = ['background', 'contentScript']
+var excludeEntriesToHotReload = [
+  'background',
+  'contentScript',
+  'kitspaceContentScript',
+]
 
 for (var entryName in config.entry) {
   if (excludeEntriesToHotReload.indexOf(entryName) === -1) {
