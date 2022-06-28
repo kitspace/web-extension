@@ -42,7 +42,7 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
         'src',
         'pages',
         'KitspaceContent',
-        'index.tsx',
+        'index.ts',
       ),
       popup: path.join(__dirname, 'src', 'pages', 'Popup', 'index.tsx'),
     },

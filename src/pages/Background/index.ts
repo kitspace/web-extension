@@ -16,5 +16,26 @@ chrome.webNavigation?.onHistoryStateUpdated.addListener(
       file: 'kitspaceContentScript.bundle.js',
     })
   },
-  { url: [{ urlMatches: 'https://kitspace.org/*' }] },
+  {
+    url: [
+      { hostEquals: 'kitspace.org' },
+      { hostEquals: 'kitspace.dev' },
+      { hostEquals: 'kitspace.test' },
+    ],
+  },
 )
+
+chrome.runtime.onMessage.addListener(({ type, value }) => {
+  switch (type) {
+    case 'bomBuilderAddToCart':
+      const { id, purchase } = value
+      Object.keys(purchase).forEach(distributor => {
+
+      })
+      return console.log({ value })
+    case 'bomBuilderClearCarts':
+      return
+    //case 'updateAddingState':
+    //case 'quickAddToCart':
+  }
+})
