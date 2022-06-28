@@ -1,5 +1,7 @@
 //eslint-disable-next-line no-console
-console.log('This is the background page.')
+console.log('Kitspace WebExtension background script loaded')
+
+import { Mouser } from './mouser'
 
 chrome.webNavigation?.onHistoryStateUpdated.addListener(
   ({ tabId }) => {
@@ -25,17 +27,36 @@ chrome.webNavigation?.onHistoryStateUpdated.addListener(
   },
 )
 
-chrome.runtime.onMessage.addListener(({ type, value }) => {
+chrome.runtime.onMessage.addListener(async ({ type, value }) => {
   switch (type) {
     case 'bomBuilderAddToCart':
       const { id, purchase } = value
-      Object.keys(purchase).forEach(distributor => {
-
-      })
-      return console.log({ value })
+      const result = await addToCarts(purchase)
+      break
     case 'bomBuilderClearCarts':
-      return
+      break
     //case 'updateAddingState':
     //case 'quickAddToCart':
   }
 })
+
+async function addToCarts(purchase) {
+  const options = await getOptions()
+  const distributors = { Mouser: new Mouser(options) }
+  const results = await Promise.all(
+    Object.keys(purchase).map(async key => [
+      key,
+      await distributors[key].addToCart(purchase[key]),
+    ]),
+  )
+  return results.reduce((obj, [key, value]) => ({ ...obj, [key]: value }))
+}
+
+async function getOptions() {
+  let options = await chrome.storage.sync.get(['settings', 'country'])
+  // earlier versions of this extension used "local" settings
+  if (Object.keys(options).length === 0) {
+    options = await chrome.storage.local.get(['settings', 'country'])
+  }
+  return options
+}
