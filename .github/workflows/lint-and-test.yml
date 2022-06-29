@@ -1,4 +1,4 @@
-name: Lint and build
+name: Lint, build and test
 
 on:
   push:
@@ -19,3 +19,4 @@ jobs:
       - run: yarn tsc
       - run: yarn build
       - run: yarn web-ext lint
+      - run: yarn test
