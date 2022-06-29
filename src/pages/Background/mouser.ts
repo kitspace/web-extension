@@ -17,8 +17,8 @@ export async function init(options) {
 
 export async function addToCart(lines): Promise<Result> {
   const { mouserCountry } = await chrome.storage.local.get('mouserCountry')
+  //eslint-disable-next-line no-console
   console.log({ mouserCountry })
 
   return { success: false, fails: [], warnings: [] }
 }
-

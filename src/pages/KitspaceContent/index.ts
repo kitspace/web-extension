@@ -20,7 +20,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 window.addEventListener(
   'message',
   event => {
-    console.log(event.data)
     if (event.data.from === 'page') {
       chrome.runtime.sendMessage({
         type: event.data.message,

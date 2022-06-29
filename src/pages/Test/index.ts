@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import 'mocha/mocha.css'
 import 'mocha/browser-entry.js'
 

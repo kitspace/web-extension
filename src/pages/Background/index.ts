@@ -1,7 +1,7 @@
+import * as Mouser from './mouser'
+
 //eslint-disable-next-line no-console
 console.log('Kitspace WebExtension background script loaded')
-
-import * as Mouser from './mouser'
 
 const distributors = { Mouser }
 
@@ -48,6 +48,8 @@ chrome.runtime.onMessage.addListener(async ({ type, value }) => {
     case 'bomBuilderAddToCart':
       const { id, purchase } = value
       const result = await addToCarts(purchase)
+      //eslint-disable-next-line no-console
+      console.log({ id, result })
       break
     case 'bomBuilderClearCarts':
       break
