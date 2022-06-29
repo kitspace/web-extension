@@ -35,6 +35,7 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
     mode: NODE_ENV,
     entry: {
       options: path.join(__dirname, 'src', 'pages', 'Options', 'index.tsx'),
+      test: path.join(__dirname, 'src', 'pages', 'Test', 'index.ts'),
       background: path.join(__dirname, 'src', 'pages', 'Background', 'index.ts'),
       contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.tsx'),
       kitspaceContentScript: path.join(
@@ -107,8 +108,18 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
       extensions: fileExtensions
         .map(extension => '.' + extension)
         .concat(['.js', '.jsx', '.ts', '.tsx', '.css']),
+      fallback: {
+        stream: require.resolve('stream-browserify'),
+        buffer: require.resolve('buffer/'),
+      },
     },
     plugins: [
+      new webpack.ProvidePlugin({
+        process: 'process/browser',
+      }),
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+      }),
       new CleanWebpackPlugin({ verbose: false }),
       new webpack.ProgressPlugin(),
       // expose and write the allowed env vars on the compiled bundle
@@ -187,6 +198,12 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
         template: path.join(__dirname, 'src', 'pages', 'Options', 'index.html'),
         filename: 'options.html',
         chunks: ['options'],
+        cache: false,
+      }),
+      new HtmlWebpackPlugin({
+        template: path.join(__dirname, 'src', 'pages', 'Test', 'index.html'),
+        filename: 'test.html',
+        chunks: ['test'],
         cache: false,
       }),
       new HtmlWebpackPlugin({
