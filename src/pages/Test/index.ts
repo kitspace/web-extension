@@ -4,7 +4,7 @@ import 'mocha/browser-entry.js'
 mocha.setup('bdd')
 
 const context = require.context(
-  './', // Root directory
+  '../../', // Root directory
   true, // Recursive
   /.+\.test\.ts$/, // Test pattern
 )

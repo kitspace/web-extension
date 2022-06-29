@@ -19,6 +19,6 @@ export async function addToCart(lines): Promise<Result> {
   const { mouserCountry } = await chrome.storage.local.get('mouserCountry')
   console.log({ mouserCountry })
 
-  return { success: true, fails: [], warnings: [] }
+  return { success: false, fails: [], warnings: [] }
 }
 
