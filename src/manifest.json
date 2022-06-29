@@ -31,8 +31,38 @@
     }
   ],
   "host_permissions": [
+    "https://*.mouser.co.uk/*",
+    "https://*.mouser.com/*",
+    "https://*.mouser.at/*",
+    "https://*.mouser.be/*",
+    "https://*.mouser.bg/*",
+    "https://*.mouser.ch/*",
+    "https://*.mouser.cl/*",
+    "https://*.mouser.de/*",
+    "https://*.mouser.do/*",
+    "https://*.mouser.ec/*",
+    "https://*.mouser.ee/*",
+    "https://*.mouser.es/*",
+    "https://*.mouser.fr/*",
+    "https://*.mouser.hk/*",
+    "https://*.mouser.hn/*",
+    "https://*.mouser.ie/*",
+    "https://*.mouser.in/*",
+    "https://*.mouser.it/*",
+    "https://*.mouser.jp/*",
+    "https://*.mouser.li/*",
+    "https://*.mouser.lu/*",
+    "https://*.mouser.mx/*",
+    "https://*.mouser.pe/*",
+    "https://*.mouser.ph/*",
+    "https://*.mouser.pr/*",
+    "https://*.mouser.sg/*",
+    "https://*.mouser.tw/*",
+
     "https://github.com/*",
     "https://raw.githubusercontent.com/*",
-    "https://*.kitspace.dev/*"
+
+    "https://*.kitspace.dev/*",
+    "https://*.kitspace.org/*"
   ]
 }

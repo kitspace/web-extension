@@ -1,7 +1,23 @@
 //eslint-disable-next-line no-console
 console.log('Kitspace WebExtension background script loaded')
 
-import { Mouser } from './mouser'
+import * as Mouser from './mouser'
+
+const distributors = { Mouser }
+
+chrome.storage.local.get(['mouserInitialized'], async ({ mouserInitialized }) => {
+  if (!mouserInitialized) {
+    const options = await getOptions()
+    await Mouser.init(options)
+  }
+})
+
+chrome.storage.onChanged.addListener(async (changes, namespace) => {
+  if (namespace === 'sync') {
+    const options = await getOptions()
+    Mouser.init(options)
+  }
+})
 
 chrome.webNavigation?.onHistoryStateUpdated.addListener(
   ({ tabId }) => {
@@ -41,12 +57,10 @@ chrome.runtime.onMessage.addListener(async ({ type, value }) => {
 })
 
 async function addToCarts(purchase) {
-  const options = await getOptions()
-  const distributors = { Mouser: new Mouser(options) }
   const results = await Promise.all(
-    Object.keys(purchase).map(async key => [
+    Object.entries(purchase).map(async ([key, purchaseLines]) => [
       key,
-      await distributors[key].addToCart(purchase[key]),
+      await distributors[key].addToCart(purchaseLines),
     ]),
   )
   return results.reduce((obj, [key, value]) => ({ ...obj, [key]: value }))
@@ -57,6 +71,13 @@ async function getOptions() {
   // earlier versions of this extension used "local" settings
   if (Object.keys(options).length === 0) {
     options = await chrome.storage.local.get(['settings', 'country'])
+    chrome.storage.sync.set(options)
   }
+
+  if (options.country == null) {
+    options.country = 'UK'
+    chrome.storage.sync.set(options)
+  }
+
   return options
 }
