@@ -143,7 +143,7 @@ async function addDashes(site, lines): Promise<AddDashesResult> {
       const text = await fetch(`${site}/c/?q=${line.part}`).then(r => r.text())
       try {
         const doc = new DOMParser().parseFromString(text, 'text/html')
-        let mouserPartElem = doc.getElementById(
+        let mouserPartElem: Element | HTMLElement = doc.getElementById(
           'spnMouserPartNumFormattedForProdInfo',
         )
         if (mouserPartElem == null) {
