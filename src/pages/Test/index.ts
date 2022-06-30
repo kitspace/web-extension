@@ -30,7 +30,6 @@ mocha
   })
   .on('suite end', function (suite) {
     if (suite.root) {
-      console.log({ suite })
       console.log('kitspace-web-extension-suite-end')
     }
   })

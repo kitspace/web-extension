@@ -1,4 +1,4 @@
-import * as Mouser from './mouser'
+import * as Mouser from './index'
 import assert from 'assert'
 
 describe('Mouser', function () {
