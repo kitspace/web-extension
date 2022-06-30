@@ -22,6 +22,9 @@ export async function init(options) {
 export async function addToCart(lines): Promise<Result> {
   const { mouserCountry } = await chrome.storage.local.get('mouserCountry')
   const site = sites[mouserCountry]
+
+  await clearCartErrors(site)
+
   const cartGuid = await getCartGuid(site)
   if (!cartGuid) {
     return { success: false, fails: lines, warnings: [] }
@@ -57,15 +60,42 @@ export async function addToCart(lines): Promise<Result> {
 export async function clearCart(): Promise<boolean> {
   const { mouserCountry } = await chrome.storage.local.get('mouserCountry')
   const site = sites[mouserCountry]
-  const token = await getCartToken(site)
-  const url = `${site}/cart//cart/DeleteCart`
+
+  const cartToken = await getCartToken(site)
+
+  const url = `${site}/Cart/Cart/DeleteCart`
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: `__RequestVerificationToken=${token}`,
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+    body: `__RequestVerificationToken=${cartToken}`,
   })
 
   return response.ok
+}
+
+async function clearCartErrors(site): Promise<boolean> {
+  const cartToken = await getCartToken(site)
+
+  const url = `${site}/cart/`
+  const text = await fetch(url).then(r => r.text())
+  const doc = new DOMParser().parseFromString(text, 'text/html')
+  const errors = doc.querySelectorAll('.grid-row.row-error')
+  const ids = Array.from(errors).map(e => e.getAttribute('data-itemid'))
+  const responses = await Promise.all(
+    ids.map(id => {
+      const url = `${site}/Cart/Cart/DeleteCartItem?cartItemId=${id}&page=null&grid-column=SortColumn&grid-dir=0`
+      return fetch(url, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        },
+        body: `__RequestVerificationToken=${cartToken}`,
+      })
+    }),
+  )
+  return responses.every(r => r.ok)
 }
 
 async function getCartGuid(site): Promise<string | undefined> {
