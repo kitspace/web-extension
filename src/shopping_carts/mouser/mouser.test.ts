@@ -4,7 +4,12 @@ import assert from 'assert'
 describe('Mouser', function () {
   before(async function () {
     this.timeout(10_000)
-    await Mouser.init({ country: 'UK' })
+    await Mouser.init({ country: 'UK' }).catch(e => {
+      console.error(e)
+      assert.fail(e)
+    })
+    const didClearCart = await Mouser.clearCart()
+    assert(didClearCart, "didn't clear cart")
   })
   afterEach(async function () {
     this.timeout(10_000)
