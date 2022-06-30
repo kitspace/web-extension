@@ -41,7 +41,16 @@ puppeteer
           browser.close()
         }
       })
-      .on('pageerror', ({ message }) => console.log(message))
+      .on('pageerror', ({ message }) => {
+        // ignore unsafe-eval errors that we can't seem to prevent
+        if (
+          !message.startsWith(
+            "EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script",
+          )
+        ) {
+          console.log('PAGE ERROR', message)
+        }
+      })
       .on('response', response =>
         console.log(`${response.status()} ${response.url()}`),
       )
