@@ -22,22 +22,20 @@ export async function init(options) {
 export async function addToCart(lines): Promise<Result> {
   const { mouserCountry } = await chrome.storage.local.get('mouserCountry')
   const site = sites[mouserCountry]
-
-  await clearCartErrors(site)
-
   const cartGuid = await getCartGuid(site)
   if (!cartGuid) {
     return { success: false, fails: lines, warnings: [] }
   }
+  await clearCartErrors(site)
+  let { linesWithDashes, fails } = await addDashes(site, lines)
+  lines = linesWithDashes
   const url = `${site}/api/Cart/AddCartItems?cartGuid=${cartGuid}&source=SearchProductDetail`
-
   const body = lines.map(line => ({
     MouserPartNumber: line.part,
     Quantity: line.quantity,
     MouseReelRequest: 'None',
     CustomerPartNumber: line.reference,
   }))
-
   const response = await fetch(url, {
     method: 'POST',
     body: JSON.stringify(body),
@@ -46,23 +44,21 @@ export async function addToCart(lines): Promise<Result> {
       Accept: 'application/json',
     },
   }).then(r => r.json())
-
   if (response.CartHasErrorItem) {
-    const fails = response.Items.filter(item => item.HasError).map(item =>
-      lines.find(line => line.part === item.MouserPartNumber),
+    fails = fails.concat(
+      response.Items.filter(item => item.HasError)
+        .map(item => lines.find(line => line.part === item.MouserPartNumber))
+        .filter(Boolean),
     )
     return { success: false, fails, warnings: [] }
   }
-
-  return { success: true, fails: [], warnings: [] }
+  return { success: true, fails, warnings: [] }
 }
 
 export async function clearCart(): Promise<boolean> {
   const { mouserCountry } = await chrome.storage.local.get('mouserCountry')
   const site = sites[mouserCountry]
-
   const cartToken = await getCartToken(site)
-
   const url = `${site}/Cart/Cart/DeleteCart`
   const response = await fetch(url, {
     method: 'POST',
@@ -127,4 +123,46 @@ function getAddingToken(site): Promise<string | undefined> {
         return match[1]
       }
     })
+}
+
+interface AddDashesResult {
+  linesWithDashes: Array<any>
+  fails: Array<any>
+}
+
+async function addDashes(site, lines): Promise<AddDashesResult> {
+  // this is not great, we used to remove dashes in our mouser part numbers but
+  // mouser API doesn't accept those any more. below we do a search and get the
+  // mouser part number with dashes from the page
+
+  let linesWithDashes = await Promise.all(
+    lines.map(async line => {
+      if (/-/.test(line.part)) {
+        return line
+      }
+      const text = await fetch(`${site}/c/?q=${line.part}`).then(r => r.text())
+      try {
+        const doc = new DOMParser().parseFromString(text, 'text/html')
+        let mouserPartElem = doc.getElementById(
+          'spnMouserPartNumFormattedForProdInfo',
+        )
+        if (mouserPartElem == null) {
+          // it's a search result page, we take the first result
+          mouserPartElem = doc.getElementsByClassName('mpart-number-lbl')[0]
+        }
+        const mouserPart = mouserPartElem.innerHTML.trim()
+        if (mouserPart.replace(/-/g, '') !== line.part) {
+          return { fail: line }
+        }
+        return { ...line, part: mouserPart }
+      } catch (e) {
+        console.warn(e)
+        return { fail: line }
+      }
+    }),
+  )
+
+  linesWithDashes = linesWithDashes.filter(line => !line.fail)
+  const fails = linesWithDashes.filter(line => line.fail).map(line => line.fail)
+  return { linesWithDashes, fails }
 }
