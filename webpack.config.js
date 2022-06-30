@@ -122,8 +122,10 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
       }),
       new CleanWebpackPlugin({ verbose: false }),
       new webpack.ProgressPlugin(),
-      // expose and write the allowed env vars on the compiled bundle
-      new webpack.EnvironmentPlugin(['NODE_ENV']),
+      new webpack.EnvironmentPlugin({
+        // use 'development' unless process.env.NODE_ENV is defined
+        NODE_ENV: 'development',
+      }),
       new CopyWebpackPlugin({
         patterns: [
           {

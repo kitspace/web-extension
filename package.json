@@ -8,8 +8,8 @@
     "url": "https://github.com/lxieyang/chrome-extension-boilerplate-react.git"
   },
   "scripts": {
-    "build": "NODE_ENV=production webpack build",
-    "dev": "NODE_ENV=development node utils/webserver.js",
+    "build": "webpack build",
+    "dev": "node utils/webserver.js",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "web-ext": "web-ext --source-dir=build/manifest-v2",
     "tsc": "tsc --noEmit",
