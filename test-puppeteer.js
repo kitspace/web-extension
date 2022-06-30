@@ -4,7 +4,6 @@ const puppeteer = require('puppeteer-extra')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 const path = require('path')
 const crypto = require('crypto')
-const assert = require('assert')
 
 const extensionPath = path.join(__dirname, 'build/manifest-v3')
 
@@ -21,7 +20,6 @@ const extensionId = crypto
 puppeteer.use(StealthPlugin())
 
 let hasFailed = false
-
 
 puppeteer
   .launch({

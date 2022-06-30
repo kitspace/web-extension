@@ -6,7 +6,7 @@ describe('Mouser', function () {
     this.timeout(10_000)
     await Mouser.init({ country: 'UK' })
   })
-  it('fails to add invalid parts', async function () {
+  it.skip('fails to add invalid parts', async function () {
     const lines = [{ part: 'invalid-part', quantity: 2, reference: 'test-invalid' }]
     const result = await Mouser.addToCart(lines)
     assert(!result.success, "didn't fail to add invalid part")

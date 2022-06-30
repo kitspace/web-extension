@@ -23,7 +23,7 @@ mocha
       console.log('pending!', test.title)
     }
   })
-  .on('fail', (test, err) => {
+  .on('fail', function (test) {
     console.error('fail!', test.title)
     let err = test.err
     console.error(err)
