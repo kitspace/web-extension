@@ -45,4 +45,9 @@ describe('Mouser', function () {
     result = await Mouser.addToCart(lines)
     assert(result.success, "didn't succeed")
   })
+  it('adds part number without dashes to cart', async function () {
+    const lines = [{ part: '595NE555P', quantity: 2, reference: 'test' }]
+    const result = await Mouser.addToCart(lines)
+    assert(result.success, "didn't add part without dashes to cart")
+  })
 })
