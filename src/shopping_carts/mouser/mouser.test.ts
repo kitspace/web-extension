@@ -2,15 +2,14 @@ import * as Mouser from './index'
 import assert from 'assert'
 
 describe('Mouser', function () {
+  this.timeout(10_000)
   before(async function () {
-    this.timeout(10_000)
     await Mouser.init({ country: 'UK' }).catch(e => {
       console.error(e)
       assert.fail(e)
     })
   })
   beforeEach(async function () {
-    this.timeout(10_000)
     const didClearCart = await Mouser.clearCart()
     assert(didClearCart, "didn't clear cart")
   })
@@ -38,7 +37,6 @@ describe('Mouser', function () {
     assert(result.fails[0].part === 'invalid-part', "didn't fail invalid part")
   })
   it('clears previous cart errors', async function () {
-    this.timeout(10_000)
     let lines = [{ part: 'invalid-part', quantity: 2, reference: 'test-invalid' }]
     let result = await Mouser.addToCart(lines)
     assert(!result.success, "didn't fail")
