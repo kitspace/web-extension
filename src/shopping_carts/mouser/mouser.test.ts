@@ -37,4 +37,14 @@ describe('Mouser', function () {
     )
     assert(result.fails[0].part === 'invalid-part', "didn't fail invalid part")
   })
+  it('clears previous cart errors', async function () {
+    this.timeout(10_000)
+    let lines = [{ part: 'invalid-part', quantity: 2, reference: 'test-invalid' }]
+    let result = await Mouser.addToCart(lines)
+    assert(!result.success, "didn't fail")
+
+    lines = [{ part: '595-NE555P', quantity: 2, reference: 'test' }]
+    result = await Mouser.addToCart(lines)
+    assert(result.success, "didn't succeed")
+  })
 })
