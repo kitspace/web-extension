@@ -14,8 +14,8 @@ jobs:
 
       - uses: actions/checkout@v2
       - run: yarn install
-      - run: echo "export const KITSPACE_PROCESSOR_API_KEY = 'fake_key'" > secrets.development.js
       - run: yarn lint --max-warnings 0
       - run: yarn tsc
+      - run: echo "export const KITSPACE_PROCESSOR_API_KEY = 'fake_key'" > secrets.production.js
       - run: NODE_ENV=production yarn build
       - run: yarn web-ext lint
