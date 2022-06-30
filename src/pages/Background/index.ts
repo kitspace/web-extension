@@ -1,4 +1,4 @@
-import * as Mouser from './mouser'
+import * as Mouser from '../../shopping_carts/mouser'
 
 //eslint-disable-next-line no-console
 console.log('Kitspace WebExtension background script loaded')
