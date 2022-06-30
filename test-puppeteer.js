@@ -20,6 +20,9 @@ const extensionId = crypto
 
 puppeteer.use(StealthPlugin())
 
+let hasFailed = false
+
+
 puppeteer
   .launch({
     headless: false,
@@ -35,10 +38,17 @@ puppeteer
           `${message.type().substr(0, 3).toUpperCase()} ${message.text()}`,
         )
         if (message.type() === 'error') {
-          assert.fail(message.text())
+          hasFailed = true
+          console.error(message.text())
         }
-        if (message.text() === 'kitspace-web-extension-suite-end') {
+        if (
+          message.text() === 'kitspace-web-extension-suite-end' &&
+          process.argv[2] === '--auto-close-browser'
+        ) {
           browser.close()
+          if (hasFailed) {
+            process.exit(1)
+          }
         }
       })
       .on('pageerror', ({ message }) => {
@@ -55,7 +65,7 @@ puppeteer
         console.log(`${response.status()} ${response.url()}`),
       )
       .on('requestfailed', request =>
-        console.log(`${request.failure().errorText} ${request.url()}`),
+        console.error(`${request.failure().errorText} ${request.url()}`),
       )
     await page.goto(`chrome-extension://${extensionId}/test.html`)
   })

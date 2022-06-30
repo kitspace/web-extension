@@ -19,4 +19,4 @@ jobs:
       - run: yarn tsc
       - run: yarn build
       - run: yarn web-ext lint
-      - run: xvfb-run --auto-servernum yarn test
+      - run: xvfb-run --auto-servernum -- yarn test --auto-close-browser

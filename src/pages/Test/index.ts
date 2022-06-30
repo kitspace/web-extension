@@ -21,14 +21,16 @@ mocha
       console.log('passed!', test.title)
     } else if (test.pending) {
       console.log('pending!', test.title)
-    } else {
-      console.error('fail!', test.title)
-      let err = test.err
-      console.error(err)
     }
+  })
+  .on('fail', (test, err) => {
+    console.error('fail!', test.title)
+    let err = test.err
+    console.error(err)
   })
   .on('suite end', function (suite) {
     if (suite.root) {
+      console.log({ suite })
       console.log('kitspace-web-extension-suite-end')
     }
   })
