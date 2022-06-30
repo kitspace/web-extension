@@ -37,7 +37,6 @@ export async function addToCart(lines): Promise<Result> {
 
   const response = await fetch(url, {
     method: 'POST',
-    credentials: 'include',
     body: JSON.stringify(body),
     headers: {
       'Content-Type': 'application/json',
@@ -45,11 +44,25 @@ export async function addToCart(lines): Promise<Result> {
     },
   }).then(r => r.json())
 
-  if (!response.ok || response.CartHasErrorItem) {
+  if (response.CartHasErrorItem) {
     return { success: false, fails: lines, warnings: [] }
   }
 
   return { success: true, fails: [], warnings: [] }
+}
+
+export async function clearCart(): Promise<boolean> {
+  const { mouserCountry } = await chrome.storage.local.get('mouserCountry')
+  const site = sites[mouserCountry]
+  const token = await getCartToken(site)
+  const url = `${site}/cart//cart/DeleteCart`
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: `__RequestVerificationToken=${token}`,
+  })
+
+  return response.ok
 }
 
 async function getCartGuid(site): Promise<string | undefined> {
@@ -68,6 +81,7 @@ async function getCartToken(site): Promise<string | undefined> {
   return (doc.querySelector('form#cart-form > input') as HTMLInputElement)?.value
 }
 
+//eslint-disable-next-line
 function getAddingToken(site): Promise<string | undefined> {
   const url = `${site}/price-availability/`
   return fetch(url)
