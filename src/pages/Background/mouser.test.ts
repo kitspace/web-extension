@@ -1,8 +1,9 @@
 import * as Mouser from './mouser'
 import assert from 'assert'
 
-describe('Mouser', () => {
-  before(async () => {
+describe('Mouser', function () {
+  before(async function () {
+    this.timeout(10_000)
     await Mouser.init({ country: 'UK' })
   })
   it('adds to cart', async () => {
