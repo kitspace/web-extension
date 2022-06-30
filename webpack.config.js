@@ -30,12 +30,15 @@ if (fileSystem.existsSync(secretsPath)) {
 
 const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
   const outputDir = path.resolve(__dirname, 'build', manifestVersion)
+  const test =
+    NODE_ENV !== 'production' &&
+    path.join(__dirname, 'src', 'pages', 'Test', 'index.ts')
+  const testEntry = test ? { test } : {}
   const option = {
     name: manifestVersion,
     mode: NODE_ENV,
     entry: {
       options: path.join(__dirname, 'src', 'pages', 'Options', 'index.tsx'),
-      test: path.join(__dirname, 'src', 'pages', 'Test', 'index.ts'),
       background: path.join(__dirname, 'src', 'pages', 'Background', 'index.ts'),
       contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.tsx'),
       kitspaceContentScript: path.join(
@@ -46,6 +49,7 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
         'index.ts',
       ),
       popup: path.join(__dirname, 'src', 'pages', 'Popup', 'index.tsx'),
+      ...testEntry,
     },
     output: {
       filename: '[name].bundle.js',
@@ -203,12 +207,6 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
         cache: false,
       }),
       new HtmlWebpackPlugin({
-        template: path.join(__dirname, 'src', 'pages', 'Test', 'index.html'),
-        filename: 'test.html',
-        chunks: ['test'],
-        cache: false,
-      }),
-      new HtmlWebpackPlugin({
         template: path.join(__dirname, 'src', 'pages', 'Popup', 'index.html'),
         filename: 'popup.html',
         chunks: ['popup'],
@@ -229,7 +227,17 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
       }),
     )
   }
-  if (NODE_ENV === 'development') {
+  if (test) {
+    option.plugins.push(
+      new HtmlWebpackPlugin({
+        template: path.join(__dirname, 'src', 'pages', 'Test', 'index.html'),
+        filename: 'test.html',
+        chunks: ['test'],
+        cache: false,
+      }),
+    )
+  }
+  if (NODE_ENV !== 'production') {
     option.devtool = 'cheap-module-source-map'
   } else {
     option.optimization = {
