@@ -20,5 +20,5 @@ export async function addToCart(lines): Promise<Result> {
   //eslint-disable-next-line no-console
   console.log({ mouserCountry })
 
-  return { success: false, fails: [], warnings: [] }
+  return { success: true, fails: [], warnings: [] }
 }
