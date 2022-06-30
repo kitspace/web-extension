@@ -8,10 +8,8 @@ describe('Mouser', function () {
       console.error(e)
       assert.fail(e)
     })
-    const didClearCart = await Mouser.clearCart()
-    assert(didClearCart, "didn't clear cart")
   })
-  afterEach(async function () {
+  beforeEach(async function () {
     this.timeout(10_000)
     const didClearCart = await Mouser.clearCart()
     assert(didClearCart, "didn't clear cart")
@@ -33,7 +31,10 @@ describe('Mouser', function () {
     ]
     const result = await Mouser.addToCart(lines)
     assert(!result.success, "didn't fail")
-    assert(result.fails.length === 1, `fails should be length 1 but is ${result.fails.length}`)
+    assert(
+      result.fails.length === 1,
+      `fails should be length 1 but is ${result.fails.length}`,
+    )
     assert(result.fails[0].part === 'invalid-part', "didn't fail invalid part")
   })
 })

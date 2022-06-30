@@ -45,7 +45,10 @@ export async function addToCart(lines): Promise<Result> {
   }).then(r => r.json())
 
   if (response.CartHasErrorItem) {
-    return { success: false, fails: lines, warnings: [] }
+    const fails = response.Items.filter(item => item.HasError).map(item =>
+      lines.find(line => line.part === item.MouserPartNumber),
+    )
+    return { success: false, fails, warnings: [] }
   }
 
   return { success: true, fails: [], warnings: [] }
