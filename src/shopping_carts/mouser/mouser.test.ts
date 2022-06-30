@@ -26,4 +26,14 @@ describe('Mouser', function () {
     const result = await Mouser.addToCart(lines)
     assert(result.success, "didn't add to cart")
   })
+  it('finds out which parts failed', async function () {
+    const lines = [
+      { part: '595-NE555P', quantity: 2, reference: 'test' },
+      { part: 'invalid-part', quantity: 2, reference: 'test-invalid' },
+    ]
+    const result = await Mouser.addToCart(lines)
+    assert(!result.success, "didn't fail")
+    assert(result.fails.length === 1, `fails should be length 1 but is ${result.fails.length}`)
+    assert(result.fails[0].part === 'invalid-part', "didn't fail invalid part")
+  })
 })
