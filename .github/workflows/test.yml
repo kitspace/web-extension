@@ -16,5 +16,4 @@ jobs:
       - run: yarn install
       - run: echo "export const KITSPACE_PROCESSOR_API_KEY = 'fake_key'" > secrets.development.js
       - run: yarn build
-      - run: yarn web-ext lint
       - run: xvfb-run --auto-servernum -- yarn test --auto-close-browser
