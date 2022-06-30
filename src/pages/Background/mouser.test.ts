@@ -2,6 +2,9 @@ import * as Mouser from './mouser'
 import assert from 'assert'
 
 describe('Mouser', () => {
+  before(async () => {
+    await Mouser.init({ country: 'UK' })
+  })
   it('adds to cart', async () => {
     const lines = [{ part: '595-NE555P', quantity: 2, reference: 'test' }]
     const result = await Mouser.addToCart(lines)
