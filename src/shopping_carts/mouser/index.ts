@@ -6,7 +6,7 @@ export async function init(options) {
   let countryCode = options.country.toLowerCase()
   if (countryCode === 'uk') {
     countryCode = 'gb'
-  } else if (countryCode === 'other') {
+  } else if (countryCode === 'other' || countryCode === 'us') {
     countryCode = 'www'
   }
   // setting our sub-domain as the sites are all linked and switching
