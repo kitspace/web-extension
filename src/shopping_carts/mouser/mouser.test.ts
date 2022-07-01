@@ -60,11 +60,11 @@ function testSuite(country) {
       const result = await Mouser.addToCart(lines)
       assert(result.success, "didn't add part without dashes to cart")
     })
-    it('merges parts with same numbers', async function () {
+    it('merges parts with same part numbers', async function () {
       const lines = [
         { part: '595NE555P', quantity: 2, reference: 'test1' },
         { part: '595-NE555P', quantity: 2, reference: 'test2' },
-        { part: '595NE555P', quantity: 2, reference: 'test3' },
+        { part: '595NE555P', quantity: 3, reference: 'test3' },
       ]
       const result = await Mouser.addToCart(lines)
       assert(result.success, "didn't add merged parts")
@@ -72,7 +72,7 @@ function testSuite(country) {
       const doc = new DOMParser().parseFromString(text, 'text/html')
       assert(
         (doc.querySelector('[name="CartItems[0].Quantity"]') as HTMLInputElement)
-          .value === '6',
+          .value === '7',
         "didn't merge parts",
       )
     })
