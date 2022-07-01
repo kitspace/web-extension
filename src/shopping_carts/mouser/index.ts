@@ -1,5 +1,6 @@
 import { Result } from '../result'
 import sites from './sites.json'
+import { getMouserSkus } from './partinfo'
 
 export async function init(options) {
   let countryCode = options.country.toLowerCase()
@@ -27,8 +28,7 @@ export async function addToCart(lines): Promise<Result> {
     return { success: false, fails: lines, warnings: [] }
   }
   await clearCartErrors(site)
-  let { linesWithDashes, fails } = await addDashes(site, lines)
-  lines = linesWithDashes
+  lines = await addDashes(lines)
   const url = `${site}/api/Cart/AddCartItems?cartGuid=${cartGuid}&source=SearchProductDetail`
   const body = lines.map(line => ({
     MouserPartNumber: line.part,
@@ -44,6 +44,7 @@ export async function addToCart(lines): Promise<Result> {
       Accept: 'application/json',
     },
   }).then(r => r.json())
+  let fails = []
   if (response.CartHasErrorItem) {
     fails = fails.concat(
       response.Items.filter(item => item.HasError)
@@ -125,44 +126,18 @@ function getAddingToken(site): Promise<string | undefined> {
     })
 }
 
-interface AddDashesResult {
-  linesWithDashes: Array<any>
-  fails: Array<any>
-}
-
-async function addDashes(site, lines): Promise<AddDashesResult> {
-  // this is not great, we used to remove dashes in our mouser part numbers but
-  // mouser API doesn't accept those any more. below we do a search and get the
-  // mouser part number with dashes from the page
-
-  let linesWithDashes = await Promise.all(
-    lines.map(async line => {
-      if (/-/.test(line.part)) {
-        return line
-      }
-      const text = await fetch(`${site}/c/?q=${line.part}`).then(r => r.text())
-      try {
-        const doc = new DOMParser().parseFromString(text, 'text/html')
-        let mouserPartElem: Element | HTMLElement = doc.getElementById(
-          'spnMouserPartNumFormattedForProdInfo',
-        )
-        if (mouserPartElem == null) {
-          // it's a search result page, we take the first result
-          mouserPartElem = doc.getElementsByClassName('mpart-number-lbl')[0]
-        }
-        const mouserPart = mouserPartElem.innerHTML.trim()
-        if (mouserPart.replace(/-/g, '') !== line.part) {
-          return { fail: line }
-        }
-        return { ...line, part: mouserPart }
-      } catch (e) {
-        console.warn(e)
-        return { fail: line }
-      }
-    }),
-  )
-
-  linesWithDashes = linesWithDashes.filter(line => !line.fail)
-  const fails = linesWithDashes.filter(line => line.fail).map(line => line.fail)
-  return { linesWithDashes, fails }
+async function addDashes(lines): Promise<Array<object>> {
+  // we used to always remove dashes in our mouser part numbers but mouser API
+  // doesn't accept those any more.
+  const partsWithoutDashes = lines
+    .filter(line => !/-/.test(line.part))
+    .map(line => line.part)
+  if (partsWithoutDashes.length === 0) {
+    return lines
+  }
+  const newParts = await getMouserSkus(partsWithoutDashes)
+  return lines.map(line => ({
+    ...line,
+    part: newParts.find(p => p.replace(/-/g, '') === line.part) || line.part,
+  }))
 }

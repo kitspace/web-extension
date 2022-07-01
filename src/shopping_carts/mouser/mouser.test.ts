@@ -1,8 +1,9 @@
 import * as Mouser from './index'
 import assert from 'assert'
+import { over100MouserParts } from './mouser.fixture'
 
 describe('Mouser', function () {
-  this.timeout(10_000)
+  this.timeout(20_000)
   before(async function () {
     await Mouser.init({ country: 'UK' }).catch(e => {
       console.error(e)
@@ -49,5 +50,11 @@ describe('Mouser', function () {
     const lines = [{ part: '595NE555P', quantity: 2, reference: 'test' }]
     const result = await Mouser.addToCart(lines)
     assert(result.success, "didn't add part without dashes to cart")
+  })
+  it('adds more than 100 parts', async function () {
+    this.timeout(60_000)
+    const lines = over100MouserParts
+    const result = await Mouser.addToCart(lines)
+    assert(result.success, "didn't add more than 100 parts")
   })
 })
