@@ -51,6 +51,22 @@ describe('Mouser', function () {
     const result = await Mouser.addToCart(lines)
     assert(result.success, "didn't add part without dashes to cart")
   })
+  it('merges parts with same numbers', async function () {
+    const lines = [
+      { part: '595NE555P', quantity: 2, reference: 'test1' },
+      { part: '595-NE555P', quantity: 2, reference: 'test2' },
+      { part: '595NE555P', quantity: 2, reference: 'test3' },
+    ]
+    const result = await Mouser.addToCart(lines)
+    assert(result.success, "didn't add merged parts")
+    const text = await fetch('https://www.mouser.co.uk/Cart/').then(r => r.text())
+    const doc = new DOMParser().parseFromString(text, 'text/html')
+    assert(
+      (doc.querySelector('[aria-label="Quantity"]') as HTMLInputElement).value ===
+        '6',
+      "didn't merge parts",
+    )
+  })
   it('adds more than 100 parts', async function () {
     this.timeout(60_000)
     const lines = over100MouserParts
