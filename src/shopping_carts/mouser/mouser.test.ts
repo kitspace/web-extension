@@ -100,9 +100,10 @@ function testSuite(country) {
         { part: '595-NE555P', quantity: 2, reference: 'test2' },
         { part: '595NE555P', quantity: 3, reference: 'test3' },
       ]
+      const site = sites[country] || sites['Other']
       const result = await Mouser.addToCart(lines)
       assert(result.success, "didn't add merged parts")
-      const text = await fetch('https://www.mouser.co.uk/Cart/').then(r => r.text())
+      const text = await fetch(`${site}/Cart/`).then(r => r.text())
       const doc = new DOMParser().parseFromString(text, 'text/html')
       assert(
         (doc.querySelector('[name="CartItems[0].Quantity"]') as HTMLInputElement)

@@ -20,7 +20,7 @@ export async function init(options) {
   // setting our sub-domain as the sites are all linked and switching
   // countries would not register properly otherwise
   await fetch('https://www.mouser.com/cs/localsitesredirect?subdomain=' + subdomain)
-  await chrome.storage.local.set({ mouserSite })
+  await chrome.storage.local.set({ mouserSite, mouserInitialized: true })
 }
 
 export async function addToCart(lines): Promise<Result> {
