@@ -24,9 +24,8 @@ mocha
     }
   })
   .on('fail', function (test) {
+    console.error(test.err)
     console.error('fail!', test.title)
-    let err = test.err
-    console.error(err)
   })
   .on('suite end', function (suite) {
     if (suite.root) {

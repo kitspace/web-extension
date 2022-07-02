@@ -36,13 +36,11 @@ puppeteer
           `${message.type().substr(0, 3).toUpperCase()} ${message.text()}`,
         )
         if (message.type() === 'error') {
-          console.error(message.text())
-          if (autoCloseBrowser) {
-            // delay to make sure we log everything
-            setTimeout(() => {
-              browser.close()
-              process.exit(1)
-            }, 1000)
+          const text = message.text()
+          console.error(text)
+          if (autoCloseBrowser && text.startsWith('fail!')) {
+            browser.close()
+            process.exit(1)
           }
         }
         if (
