@@ -1,12 +1,43 @@
 import * as Mouser from './index'
 import assert from 'assert'
 import { over100MouserParts } from './mouser.fixture'
+import countries from '../countries.json'
+import sites from './sites.json'
+import { delay } from '../../utils'
 
 describe('Mouser', function () {
   this.timeout(20_000)
-  for (const country of ['US', 'DE', 'UK']) {
-    testSuite(country)
-  }
+  before(async function () {
+    // initial delay seems to be needed to pass first test
+    await delay(1000)
+  })
+  afterEach(async function () {
+    // delay in between or we get flagged as a bot
+    await delay(5000)
+  })
+  describe('init', function () {
+    for (const country of Object.values(countries)) {
+      it(`initializes ${country}`, async function () {
+        await Mouser.init({ country }).catch(e => {
+          console.error(e)
+          assert.fail(e)
+        })
+        // make sure our site data is the actual domain in-use
+        // i.e. not getting redirected
+        const site = sites[country]
+        if (site != null) {
+          const response = await fetch(site)
+          assert(response.ok, `didn't get ${site}`)
+          assert(!response.redirected, `got redirected for ${site}`)
+        }
+      })
+    }
+  })
+  describe('cart', function () {
+    for (const country of Object.keys(sites)) {
+      testSuite(country)
+    }
+  })
 })
 
 function testSuite(country) {

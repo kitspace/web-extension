@@ -1,28 +1,30 @@
 import { Result } from '../result'
 import sites from './sites.json'
 import { getMouserSkus } from './partinfo'
+import { waitFor } from '../../utils'
 
 export async function init(options) {
-  let countryCode = options.country.toLowerCase()
-  if (countryCode === 'uk') {
-    countryCode = 'gb'
-  } else if (countryCode === 'other' || countryCode === 'us') {
-    countryCode = 'www'
+  let subdomain = 'www2'
+
+  if (options.country !== 'Other' && sites[options.country] != null) {
+    subdomain = options.country.toLowerCase()
   }
+  if (subdomain === 'uk') {
+    subdomain = 'gb'
+  } else if (subdomain === 'us') {
+    subdomain = 'www'
+  }
+
+  const mouserSite = sites[options.country] || sites['Other']
+
   // setting our sub-domain as the sites are all linked and switching
   // countries would not register properly otherwise
-  await fetch(
-    'https://www.mouser.com/cs/localsitesredirect?subdomain=' + countryCode,
-  )
-  await chrome.storage.local.set({
-    mouserCountry: options.country,
-    mouserInitialized: true,
-  })
+  await fetch('https://www.mouser.com/cs/localsitesredirect?subdomain=' + subdomain)
+  await chrome.storage.local.set({ mouserSite })
 }
 
 export async function addToCart(lines): Promise<Result> {
-  const { mouserCountry } = await chrome.storage.local.get('mouserCountry')
-  const site = sites[mouserCountry]
+  const site = await waitForStorage('mouserSite')
   const cartGuid = await getCartGuid(site)
   if (!cartGuid) {
     return { success: false, fails: lines, warnings: [] }
@@ -44,22 +46,21 @@ export async function addToCart(lines): Promise<Result> {
       Accept: 'application/json',
     },
   }).then(r => r.json())
-  let fails = []
   if (response.CartHasErrorItem) {
-    fails = fails.concat(
-      response.Items.filter(item => item.HasError)
-        .map(item => lines.find(line => line.part === item.MouserPartNumber))
-        .filter(Boolean),
-    )
+    const fails = response.Items.filter(item => item.HasError)
+      .map(item => lines.find(line => line.part === item.MouserPartNumber))
+      .filter(Boolean)
     return { success: false, fails, warnings: [] }
   }
-  return { success: true, fails, warnings: [] }
+  return { success: true, fails: [], warnings: [] }
 }
 
 export async function clearCart(): Promise<boolean> {
-  const { mouserCountry } = await chrome.storage.local.get('mouserCountry')
-  const site = sites[mouserCountry]
+  const site = await waitForStorage('mouserSite')
   const cartToken = await getCartToken(site)
+  if (!cartToken) {
+    return false
+  }
   const url = `${site}/Cart/Cart/DeleteCart`
   const response = await fetch(url, {
     method: 'POST',
@@ -68,14 +69,15 @@ export async function clearCart(): Promise<boolean> {
     },
     body: `__RequestVerificationToken=${cartToken}`,
   })
-
   return response.ok
 }
 
 async function clearCartErrors(site): Promise<boolean> {
   const cartToken = await getCartToken(site)
-
-  const url = `${site}/cart/`
+  if (!cartToken) {
+    return false
+  }
+  const url = `${site}/Cart/`
   const text = await fetch(url).then(r => r.text())
   const doc = new DOMParser().parseFromString(text, 'text/html')
   const errors = doc.querySelectorAll('.grid-row.row-error')
@@ -96,7 +98,7 @@ async function clearCartErrors(site): Promise<boolean> {
 }
 
 async function getCartGuid(site): Promise<string | undefined> {
-  await fetch(`${site}/cart`)
+  await fetch(`${site}/Cart/`)
   const domain = site.replace(/^https:\/\/.*?\.mouser/, '.mouser')
   const cookies = await chrome.cookies.getAll({
     domain,
@@ -106,7 +108,7 @@ async function getCartGuid(site): Promise<string | undefined> {
 }
 
 async function getCartToken(site): Promise<string | undefined> {
-  const text = await fetch(`${site}/cart/`).then(r => r.text())
+  const text = await fetch(`${site}/cart`).then(r => r.text())
   const doc = new DOMParser().parseFromString(text, 'text/html')
   return (doc.querySelector('form#cart-form > input') as HTMLInputElement)?.value
 }
@@ -140,4 +142,11 @@ async function addDashes(lines): Promise<Array<object>> {
     ...line,
     part: newParts.find(p => p.replace(/-/g, '') === line.part) || line.part,
   }))
+}
+
+function waitForStorage(key): Promise<string> {
+  return waitFor(async () => {
+    const result = await chrome.storage.local.get(key)
+    return result[key]
+  })
 }
