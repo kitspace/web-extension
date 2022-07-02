@@ -108,7 +108,7 @@ async function getCartGuid(site): Promise<string | undefined> {
 }
 
 async function getCartToken(site): Promise<string | undefined> {
-  const text = await fetch(`${site}/cart`).then(r => r.text())
+  const text = await fetch(`${site}/Cart/`).then(r => r.text())
   const doc = new DOMParser().parseFromString(text, 'text/html')
   return (doc.querySelector('form#cart-form > input') as HTMLInputElement)?.value
 }

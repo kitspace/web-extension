@@ -26,9 +26,12 @@ describe('Mouser', function () {
         // i.e. not getting redirected
         const site = sites[country]
         if (site != null) {
-          const response = await fetch(site)
+          let response = await fetch(site)
           assert(response.ok, `didn't get ${site}`)
           assert(!response.redirected, `got redirected for ${site}`)
+          response = await fetch(site + '/Cart/')
+          assert(response.ok, `didn't get ${site}/Cart/`)
+          assert(!response.redirected, `got redirected for ${site}/Cart/`)
         }
       })
     }
