@@ -73,6 +73,9 @@
     "https://*.mouser.vn/*",
     "https://*.mouser.co.za/*",
 
+    "https://*.element14.com/*",
+    "https://*.farnell.com/*",
+
     "https://github.com/*",
     "https://raw.githubusercontent.com/*",
 
