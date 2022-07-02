@@ -66,6 +66,9 @@ async function addToCartReturnFails(site, storeId, lines): Promise<Array<Line>> 
 export async function clearCart(): Promise<boolean> {
   const site = await waitForStorage('farnellSite')
   const [cartIds, storeId] = await Promise.all([getCartIds(site), getStoreId(site)])
+  if (cartIds == null || storeId == null) {
+    return false
+  }
   const url = `${site}/webapp/wcs/stores/servlet/ProcessBasket`
   let params = `langId=&orderId=&catalogId=&BASE_URL=BasketPage&errorViewName=BasketErrorAjaxResponse&storeId=${storeId}&URL=BasketDataAjaxResponse&calcRequired=true&orderItemDeleteAll=&isBasketUpdated=true`
   cartIds.forEach(id => {
@@ -80,8 +83,13 @@ async function getCartIds(site): Promise<Array<string>> {
   const text = await fetchRetry(url).then(r => r.text())
   const doc = new DOMParser().parseFromString(text, 'text/html')
   const orderDetails = doc.querySelector('#order_details')
-  const tbody = orderDetails.querySelector('tbody')
-  const inputs = tbody.querySelectorAll('input')
+  const tbody = orderDetails?.querySelector('tbody')
+  const inputs = tbody?.querySelectorAll('input')
+
+  if (inputs == null) {
+    return null
+  }
+
   return Array.from(inputs)
     .map(input => {
       if (input.type === 'hidden' && /orderItem_/.test(input.id)) {

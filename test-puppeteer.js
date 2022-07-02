@@ -38,8 +38,11 @@ puppeteer
         if (message.type() === 'error') {
           console.error(message.text())
           if (autoCloseBrowser) {
-            browser.close()
-            process.exit(1)
+            // delay to make sure we log everything
+            setTimeout(() => {
+              browser.close()
+              process.exit(1)
+            }, 1000)
           }
         }
         if (
