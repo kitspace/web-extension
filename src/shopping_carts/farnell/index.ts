@@ -1,6 +1,6 @@
 import { Result, Line } from '../result'
 import sites from './sites.json'
-import { waitFor } from '../../utils'
+import { waitFor, fetchRetry } from '../../utils'
 
 const headers = {
   'content-type': 'application/x-www-form-urlencoded',
@@ -36,9 +36,11 @@ async function addToCartReturnFails(site, storeId, lines): Promise<Array<Line>> 
     const reference = line.reference.replace(/,/g, ' ')
     params += encodeURIComponent(reference.substr(0, 30)) + '\n'
   }
-  const text = await fetch(url, { method: 'POST', headers, body: params }).then(r =>
-    r.text(),
-  )
+  const text = await fetchRetry(url, {
+    method: 'POST',
+    headers,
+    body: params,
+  }).then(r => r.text())
 
   // the response is a bit cursed, it's JSON inside a JS comment, even if
   // we send a 'accept: application/json' header
@@ -69,13 +71,13 @@ export async function clearCart(): Promise<boolean> {
   cartIds.forEach(id => {
     params += `&orderItemDelete=${id}`
   })
-  const response = await fetch(url, { method: 'POST', headers, body: params })
+  const response = await fetchRetry(url, { method: 'POST', headers, body: params })
   return response.ok
 }
 
 async function getCartIds(site): Promise<Array<string>> {
   const url = `${site}/webapp/wcs/stores/servlet/AjaxOrderItemDisplayView`
-  const text = await fetch(url).then(r => r.text())
+  const text = await fetchRetry(url).then(r => r.text())
   const doc = new DOMParser().parseFromString(text, 'text/html')
   const orderDetails = doc.querySelector('#order_details')
   const tbody = orderDetails.querySelector('tbody')
@@ -92,7 +94,7 @@ async function getCartIds(site): Promise<Array<string>> {
 
 async function getStoreId(site): Promise<string | undefined> {
   const url = `${site}/webapp/wcs/stores/servlet/AjaxOrderItemDisplayView`
-  const text = await fetch(url).then(res => res.text())
+  const text = await fetchRetry(url).then(res => res.text())
   const doc = new DOMParser().parseFromString(text, 'text/html')
   const elem = doc.getElementById('storeId') as HTMLInputElement
   return elem?.value
