@@ -31,21 +31,23 @@ puppeteer
   .then(async browser => {
     const page = await browser.newPage()
     page
-      .on('console', message => {
-        console.log(
-          `${message.type().substr(0, 3).toUpperCase()} ${message.text()}`,
-        )
-        if (message.type() === 'error') {
-          const text = message.text()
-          console.error(text)
-          if (autoCloseBrowser && text.startsWith('fail!')) {
-            browser.close()
-            process.exit(1)
-          }
+      .on('console', async message => {
+        let text = message.text()
+        const args = await Promise.all(message.args().map(arg => describe(arg)))
+        for (let i = 0; i < args.length; ++i) {
+          text += `[${i}] ${args[i]} `
         }
+        console.log(`${message.type().substr(0, 3).toUpperCase()} ${text}`)
         if (
-          message.text() === 'kitspace-web-extension-suite-end' &&
-          autoCloseBrowser
+          autoCloseBrowser &&
+          message.type() === 'error' &&
+          text.startsWith('fail!')
+        ) {
+          browser.close()
+          process.exit(1)
+        } else if (
+          autoCloseBrowser &&
+          message.text() === 'kitspace-web-extension-suite-end'
         ) {
           browser.close()
         }
@@ -68,3 +70,10 @@ puppeteer
       )
     await page.goto(`chrome-extension://${extensionId}/test.html`)
   })
+
+function describe(jsHandle) {
+  return jsHandle.executionContext().evaluate(obj => {
+    // serialize |obj| however you want
+    return `OBJ: ${typeof obj}, ${obj}`
+  }, jsHandle)
+}
