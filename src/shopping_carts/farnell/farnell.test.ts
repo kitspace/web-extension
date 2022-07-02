@@ -35,12 +35,12 @@ describe('Farnell', function () {
   })
   describe('cart', function () {
     for (const country of Object.keys(sites)) {
-      testSuite(country)
+      testCountry(country)
     }
   })
 })
 
-function testSuite(country) {
+function testCountry(country) {
   describe(country, function () {
     before(async function () {
       await Farnell.init({ country }).catch(e => {
@@ -76,6 +76,27 @@ function testSuite(country) {
         `fails should be length 1 but is ${result.fails.length}`,
       )
       assert(result.fails[0].part === 'invalid-part', "didn't fail invalid part")
+    })
+    it('finds out which parts failed 2', async function () {
+      const lines = [
+        { part: '3006909', quantity: 2, reference: 'test' },
+        { part: 'invalid-part', quantity: 2, reference: 'test-invalid' },
+        { part: 'invalid-part2', quantity: 2, reference: 'test-invalid2' },
+      ]
+      const result = await Farnell.addToCart(lines)
+      assert(!result.success, "didn't fail")
+      assert(
+        result.fails.length === 2,
+        `fails should be length 2 but is ${result.fails.length}`,
+      )
+      assert(
+        result.fails.find(l => l.part === 'invalid-part'),
+        "didn't fail invalid part",
+      )
+      assert(
+        result.fails.find(l => l.part === 'invalid-part2'),
+        "didn't fail invalid part 2",
+      )
     })
     it('clears previous cart errors', async function () {
       let lines = [{ part: 'invalid-part', quantity: 2, reference: 'test-invalid' }]
