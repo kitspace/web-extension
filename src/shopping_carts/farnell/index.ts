@@ -78,13 +78,24 @@ export async function clearCart(): Promise<boolean> {
   return response.ok
 }
 
-async function getCartIds(site): Promise<Array<string>> {
+async function getCartIds(site): Promise<Array<string> | null> {
   const url = `${site}/webapp/wcs/stores/servlet/AjaxOrderItemDisplayView`
-  const text = await fetchRetry(url).then(r => r.text())
-  const doc = new DOMParser().parseFromString(text, 'text/html')
-  const orderDetails = doc.querySelector('#order_details')
-  const tbody = orderDetails?.querySelector('tbody')
-  const inputs = tbody?.querySelectorAll('input')
+  // we should be able to get the cart, but sometimes it fails
+  // let's retry till we can get it
+  const inputs: NodeListOf<HTMLInputElement> | undefined = await waitFor(
+    async () => {
+      const text = await fetchRetry(url).then(r => r.text())
+      const doc = new DOMParser().parseFromString(text, 'text/html')
+      const orderDetails = doc.querySelector('#order_details')
+      const tbody = orderDetails?.querySelector('tbody')
+      const inputs = tbody?.querySelectorAll('input')
+      return inputs
+    },
+  ).catch(e => {
+    // timed out
+    console.error(e)
+    return null
+  })
 
   if (inputs == null) {
     return null
@@ -95,17 +106,23 @@ async function getCartIds(site): Promise<Array<string>> {
       if (input.type === 'hidden' && /orderItem_/.test(input.id)) {
         return input.value
       }
-      return undefined
+      return null
     })
     .filter(Boolean)
 }
 
-async function getStoreId(site): Promise<string | undefined> {
+function getStoreId(site): Promise<string | undefined> {
   const url = `${site}/webapp/wcs/stores/servlet/AjaxOrderItemDisplayView`
-  const text = await fetchRetry(url).then(res => res.text())
-  const doc = new DOMParser().parseFromString(text, 'text/html')
-  const elem = doc.getElementById('storeId') as HTMLInputElement
-  return elem?.value
+  return waitFor(async () => {
+    const text = await fetchRetry(url).then(res => res.text())
+    const doc = new DOMParser().parseFromString(text, 'text/html')
+    const elem = doc.getElementById('storeId') as HTMLInputElement
+    return elem?.value
+  }).catch(e => {
+    // timed out
+    console.error(e)
+    return undefined
+  })
 }
 
 function waitForStorage(key): Promise<string> {
