@@ -5,6 +5,8 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 const path = require('path')
 const crypto = require('crypto')
 
+const autoCloseBrowser = process.argv[2] === '--auto-close-browser'
+
 const extensionPath = path.join(__dirname, 'build/manifest-v3')
 
 // this is how chromium determines the extension id of an unpacked extension
@@ -18,8 +20,6 @@ const extensionId = crypto
   .join('')
 
 puppeteer.use(StealthPlugin())
-
-let hasFailed = false
 
 puppeteer
   .launch({
@@ -36,17 +36,17 @@ puppeteer
           `${message.type().substr(0, 3).toUpperCase()} ${message.text()}`,
         )
         if (message.type() === 'error') {
-          hasFailed = true
           console.error(message.text())
+          if (autoCloseBrowser) {
+            browser.close()
+            process.exit(1)
+          }
         }
         if (
           message.text() === 'kitspace-web-extension-suite-end' &&
-          process.argv[2] === '--auto-close-browser'
+          autoCloseBrowser
         ) {
           browser.close()
-          if (hasFailed) {
-            process.exit(1)
-          }
         }
       })
       .on('pageerror', ({ message }) => {
