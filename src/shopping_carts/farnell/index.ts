@@ -13,11 +13,11 @@ export async function addToCart(lines): Promise<Result> {
   if (storeId == null) {
     return { success: false, fails: lines, warnings: [] }
   }
-    // TODO handle truncating line-notes (if still needed)
-    //if (reference.length > 30) {
-    //  warnings.push(`Truncated line-note when adding
-    //                ${this.name} line to cart: ${line.reference}`)
-    //}
+  // TODO handle truncating line-notes (if still needed)
+  //if (reference.length > 30) {
+  //  warnings.push(`Truncated line-note when adding
+  //                ${this.name} line to cart: ${line.reference}`)
+  //}
 
   const fails = await addToCartReturnFails(site, storeId, lines)
   return { success: fails.length === 0, fails, warnings: [] }

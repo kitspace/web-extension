@@ -3,18 +3,9 @@ import assert from 'assert'
 import { over100FarnellParts } from './farnell.fixture'
 import countries from '../countries.json'
 import sites from './sites.json'
-import { delay } from '../../utils'
 
 describe('Farnell', function () {
   this.timeout(20_000)
-  //before(async function () {
-  //  // initial delay seems to be needed to pass first test
-  //  await delay(1000)
-  //})
-  //afterEach(async function () {
-  //  // delay in between or we get flagged as a bot
-  //  await delay(5000)
-  //})
   describe('init', function () {
     for (const country of Object.values(countries)) {
       it(`initializes ${country}`, async function () {

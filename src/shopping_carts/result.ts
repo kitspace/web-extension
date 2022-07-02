@@ -1,7 +1,7 @@
 export interface Line {
-  part: string,
-  quantity: number,
-  reference: string,
+  part: string
+  quantity: number
+  reference: string
 }
 
 export interface Result {
