@@ -32,16 +32,14 @@ puppeteer
     const page = await browser.newPage()
     page
       .on('console', async message => {
-        let text = message.text()
-        const args = await Promise.all(message.args().map(arg => describe(arg)))
-        for (let i = 0; i < args.length; ++i) {
-          text += `[${i}] ${args[i]} `
-        }
-        console.log(`${message.type().substr(0, 3).toUpperCase()} ${text}`)
+        const argsText = (
+          await Promise.all(message.args().map(arg => describe(arg)))
+        ).join(' ')
+        console.log(`${message.type().substr(0, 3).toUpperCase()} ${argsText}`)
         if (
           autoCloseBrowser &&
           message.type() === 'error' &&
-          text.startsWith('fail!')
+          message.text().startsWith('fail!')
         ) {
           browser.close()
           process.exit(1)
@@ -73,7 +71,6 @@ puppeteer
 
 function describe(jsHandle) {
   return jsHandle.executionContext().evaluate(obj => {
-    // serialize |obj| however you want
-    return `OBJ: ${typeof obj}, ${obj}`
+    return `${obj}`
   }, jsHandle)
 }
