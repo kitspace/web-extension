@@ -85,15 +85,18 @@ async function getCartIds(site): Promise<Array<string> | null> {
   const inputs: NodeListOf<HTMLInputElement> | undefined = await waitFor(
     async () => {
       const text = await fetchRetry(url).then(r => r.text())
+      console.log('getCartIds text')
       const doc = new DOMParser().parseFromString(text, 'text/html')
+      console.log('getCartIds doc')
       const orderDetails = doc.querySelector('#order_details')
       const tbody = orderDetails?.querySelector('tbody')
       const inputs = tbody?.querySelectorAll('input')
+      console.log('inputs is null:', inputs == null)
       return inputs
     },
   ).catch(e => {
     // timed out?
-    console.error('getCardIds:')
+    console.error('getCartIds:')
     console.error(e)
     return null
   })
@@ -116,8 +119,11 @@ function getStoreId(site): Promise<string | null> {
   const url = `${site}/webapp/wcs/stores/servlet/AjaxOrderItemDisplayView`
   return waitFor(async () => {
     const text = await fetchRetry(url).then(res => res.text())
+    console.log('text')
     const doc = new DOMParser().parseFromString(text, 'text/html')
+    console.log('doc')
     const elem = doc.getElementById('storeId') as HTMLInputElement
+    console.log('elem is null:', elem == null)
     return elem?.value
   }).catch(e => {
     // timed out?

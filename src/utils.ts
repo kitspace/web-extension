@@ -7,16 +7,17 @@ export function waitFor<T>(
   timeoutMs = 5000,
   intervalMs = 10,
 ): Promise<T> {
-  const loop = async () => {
+  const loop = async (i) => {
+    console.log('calling fn', i)
     const result = await fn()
     if (result != null) {
       return result
     }
     await delay(intervalMs)
-    return loop()
+    return loop(i + 1)
   }
   return Promise.race([
-    loop(),
+    loop(0),
     delay(timeoutMs).then(() => {
       throw Error('The `waitFor` function timed out.')
     }),
