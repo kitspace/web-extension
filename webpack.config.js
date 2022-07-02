@@ -144,7 +144,7 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
                 ...JSON.parse(content.toString()),
               }
               if (manifestVersion === 'manifest-v3') {
-                return Buffer.from(JSON.stringify(v3))
+                return Buffer.from(JSON.stringify(v3, null, 2))
               }
 
               const v2 = {
@@ -168,7 +168,7 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
                 ),
                 content_security_policy: "script-src 'self'; object-src 'self'",
               }
-              return Buffer.from(JSON.stringify(v2))
+              return Buffer.from(JSON.stringify(v2, null, 2))
             },
           },
         ],
