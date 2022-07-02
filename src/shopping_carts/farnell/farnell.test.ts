@@ -103,15 +103,18 @@ function testCountry(country) {
         { part: '3006909', quantity: 2, reference: 'test1' },
         { part: '3006909', quantity: 3, reference: 'test2' },
       ]
+      const site = sites[country] || sites['Other']
       const result = await Farnell.addToCart(lines)
       assert(result.success, "didn't add merged parts")
-      //const text = await fetch('https://www.mouser.co.uk/Cart/').then(r => r.text())
-      //const doc = new DOMParser().parseFromString(text, 'text/html')
-      //assert(
-      //  (doc.querySelector('[name="CartItems[0].Quantity"]') as HTMLInputElement)
-      //    .value === '5',
-      //  "didn't merge parts",
-      //)
+      const text = await fetch(
+        `${site}/webapp/wcs/stores/servlet/AjaxOrderItemDisplayView`,
+      ).then(r => r.text())
+      const doc = new DOMParser().parseFromString(text, 'text/html')
+      assert(
+        (doc.querySelector('[name="quantity_1"]') as HTMLInputElement).value ===
+          '5',
+        "didn't merge parts",
+      )
     })
     it.skip('adds more than 100 parts', async function () {
       this.timeout(60_000)

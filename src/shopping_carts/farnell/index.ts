@@ -2,6 +2,10 @@ import { Result, Line } from '../result'
 import sites from './sites.json'
 import { waitFor } from '../../utils'
 
+const headers = {
+  'content-type': 'application/x-www-form-urlencoded',
+}
+
 export async function init({ country }) {
   const farnellSite = sites[country] || sites['Other']
   await chrome.storage.local.set({ farnellSite, farnellInitialized: true })
@@ -23,11 +27,6 @@ export async function addToCart(lines): Promise<Result> {
   return { success: fails.length === 0, fails, warnings: [] }
 }
 
-export async function clearCart(): Promise<boolean> {
-  const site = await waitForStorage('farnellSite')
-  return true
-}
-
 async function addToCartReturnFails(site, storeId, lines): Promise<Array<Line>> {
   const url = `${site}/AjaxPasteOrderChangeServiceItemAdd`
   let params = `storeId=${storeId}&catalogId=&langId=-1&omItemAdd=quickPaste&URL=AjaxOrderItemDisplayView%3FstoreId%3D10194%26catalogId%3D15003%26langId%3D-1%26quickPaste%3D*&errorViewName=QuickOrderView&calculationUsage=-1%2C-2%2C-3%2C-4%2C-5%2C-6%2C-7&isQuickPaste=true&quickPaste=`
@@ -37,13 +36,9 @@ async function addToCartReturnFails(site, storeId, lines): Promise<Array<Line>> 
     const reference = line.reference.replace(/,/g, ' ')
     params += encodeURIComponent(reference.substr(0, 30)) + '\n'
   }
-  const text = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded',
-    },
-    body: params,
-  }).then(r => r.text())
+  const text = await fetch(url, { method: 'POST', headers, body: params }).then(r =>
+    r.text(),
+  )
 
   // the response is a bit cursed, it's JSON inside a JS comment, even if
   // we send a 'accept: application/json' header
@@ -59,10 +54,40 @@ async function addToCartReturnFails(site, storeId, lines): Promise<Array<Line>> 
         const i = parseInt(match[1], 10) - 1
         return lines[i]
       }
+      return false
     })
     .filter(Boolean)
 
   return fails
+}
+
+export async function clearCart(): Promise<boolean> {
+  const site = await waitForStorage('farnellSite')
+  const [cartIds, storeId] = await Promise.all([getCartIds(site), getStoreId(site)])
+  const url = `${site}/webapp/wcs/stores/servlet/ProcessBasket`
+  let params = `langId=&orderId=&catalogId=&BASE_URL=BasketPage&errorViewName=BasketErrorAjaxResponse&storeId=${storeId}&URL=BasketDataAjaxResponse&calcRequired=true&orderItemDeleteAll=&isBasketUpdated=true`
+  cartIds.forEach(id => {
+    params += `&orderItemDelete=${id}`
+  })
+  const response = await fetch(url, { method: 'POST', headers, body: params })
+  return response.ok
+}
+
+async function getCartIds(site): Promise<Array<string>> {
+  const url = `${site}/webapp/wcs/stores/servlet/AjaxOrderItemDisplayView`
+  const text = await fetch(url).then(r => r.text())
+  const doc = new DOMParser().parseFromString(text, 'text/html')
+  const orderDetails = doc.querySelector('#order_details')
+  const tbody = orderDetails.querySelector('tbody')
+  const inputs = tbody.querySelectorAll('input')
+  return Array.from(inputs)
+    .map(input => {
+      if (input.type === 'hidden' && /orderItem_/.test(input.id)) {
+        return input.value
+      }
+      return undefined
+    })
+    .filter(Boolean)
 }
 
 async function getStoreId(site): Promise<string | undefined> {
