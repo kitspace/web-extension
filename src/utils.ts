@@ -4,10 +4,9 @@ export function delay(ms: number): Promise<void> {
 
 export function waitFor<T>(
   fn: () => Promise<T>,
-  timeoutMs = 5000,
-  intervalMs = 10,
+  { timeoutMs = 5000, intervalMs = 10 } = {},
 ): Promise<T> {
-  const loop = async (i) => {
+  const loop = async i => {
     console.log('calling fn', i)
     const result = await fn()
     if (result != null) {

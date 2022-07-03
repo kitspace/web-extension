@@ -94,6 +94,7 @@ async function getCartIds(site): Promise<Array<string> | null> {
       console.log('inputs is null:', inputs == null)
       return inputs
     },
+    { timeoutMs: 60_000 },
   ).catch(e => {
     // timed out?
     console.error('getCartIds:')
@@ -117,15 +118,18 @@ async function getCartIds(site): Promise<Array<string> | null> {
 
 function getStoreId(site): Promise<string | null> {
   const url = `${site}/webapp/wcs/stores/servlet/AjaxOrderItemDisplayView`
-  return waitFor(async () => {
-    const text = await fetchRetry(url).then(res => res.text())
-    console.log('text')
-    const doc = new DOMParser().parseFromString(text, 'text/html')
-    console.log('doc')
-    const elem = doc.getElementById('storeId') as HTMLInputElement
-    console.log('elem is null:', elem == null)
-    return elem?.value
-  }).catch(e => {
+  return waitFor(
+    async () => {
+      const text = await fetchRetry(url).then(res => res.text())
+      console.log('text')
+      const doc = new DOMParser().parseFromString(text, 'text/html')
+      console.log('doc')
+      const elem = doc.getElementById('storeId') as HTMLInputElement
+      console.log('elem is null:', elem == null)
+      return elem?.value
+    },
+    { timeoutMs: 60_000 },
+  ).catch(e => {
     // timed out?
     console.error('getStoreId:')
     console.error(e)
