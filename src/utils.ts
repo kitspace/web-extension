@@ -23,17 +23,12 @@ export function waitFor<T>(
   ])
 }
 
-export async function fetchRetry(
-  url,
-  fetchOptions = {},
-  retries = 20,
-  n = 0,
-): Promise<Response> {
-  const response = await fetch(url, fetchOptions)
+export async function retry(fetch, args, retries = 20, n = 0): Promise<Response> {
+  const response = await fetch.apply(this, args)
   if (!response.ok) {
     await delay(1000)
     if (n < retries) {
-      return fetchRetry(url, fetchOptions, retries, n)
+      return retry(fetch, args, retries, n + 1)
     }
   }
   return response

@@ -7605,6 +7605,11 @@ function-bind@^1.1.1:
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.1.tgz#a56899d3ea3c9bab874bb9773b7c5ede92f4895d"
   integrity sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==
 
+function-rate-limit@^1.0.1:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/function-rate-limit/-/function-rate-limit-1.1.0.tgz#eccdf1af918fc959eb6509058603e462e37fd683"
+  integrity sha512-XNFOWy3kSz+96MeBCDUMmsLMSb7SmkAIfnhOsPRPz9V2Dx2agNmqjT//3QvXOgIH7FcGPfXMj8peajKHYuQ/Sw==
+
 function.prototype.name@^1.1.0, function.prototype.name@^1.1.5:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/function.prototype.name/-/function.prototype.name-1.1.5.tgz#cce0505fe1ffb80503e6f9e46cc64e46a12a9621"
@@ -11508,6 +11513,13 @@ promise-inflight@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/promise-inflight/-/promise-inflight-1.0.1.tgz#98472870bf228132fcbdd868129bad12c3c029e3"
   integrity sha1-mEcocL8igTL8vdhoEputEsPAKeM=
+
+promise-rate-limit@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/promise-rate-limit/-/promise-rate-limit-0.0.1.tgz#98fec7d214f7d92f93297b7c175794664faffb4d"
+  integrity sha512-40Vw0Hrg/gQYUf9/IZnsw1ZYHQHrdZHKFEIzdVtGf4t1d5PJxnJvrIHmizQAMob8xrsw0wgRQiAbv1qTRYWMJA==
+  dependencies:
+    function-rate-limit "^1.0.1"
 
 promise-toolbox@0.20.0:
   version "0.20.0"

@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "hast-to-hyperscript": "^10.0.1",
+    "promise-rate-limit": "^0.0.1",
     "react": "^18.1.0",
     "react-autosize-container": "^1.0.8",
     "react-dom": "^18.1.0",

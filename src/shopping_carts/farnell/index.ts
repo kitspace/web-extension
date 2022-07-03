@@ -1,10 +1,13 @@
+import promiseRateLimit from 'promise-rate-limit'
 import { Result, Line } from '../result'
 import sites from './sites.json'
-import { waitFor, fetchRetry } from '../../utils'
+import { waitFor, retry } from '../../utils'
 
 const headers = {
   'content-type': 'application/x-www-form-urlencoded',
 }
+
+const fetch = promiseRateLimit(40, 1000, global.fetch)
 
 export async function init({ country }) {
   const farnellSite = sites[country] || sites['Other']
@@ -36,11 +39,14 @@ async function addToCartReturnFails(site, storeId, lines): Promise<Array<Line>> 
     const reference = line.reference.replace(/,/g, ' ')
     params += encodeURIComponent(reference.substr(0, 30)) + '\n'
   }
-  const text = await fetchRetry(url, {
-    method: 'POST',
-    headers,
-    body: params,
-  }).then(r => r.text())
+  const text = await retry(fetch, [
+    url,
+    {
+      method: 'POST',
+      headers,
+      body: params,
+    },
+  ]).then(r => r.text())
 
   // the response is a bit cursed, it's JSON inside a JS comment, even if
   // we send a 'accept: application/json' header
@@ -74,7 +80,10 @@ export async function clearCart(): Promise<boolean> {
   cartIds.forEach(id => {
     params += `&orderItemDelete=${id}`
   })
-  const response = await fetchRetry(url, { method: 'POST', headers, body: params })
+  const response = await retry(fetch, [
+    url,
+    { method: 'POST', headers, body: params },
+  ])
   return response.ok
 }
 
@@ -84,7 +93,7 @@ async function getCartIds(site): Promise<Array<string> | null> {
   // let's retry till we can get it
   const inputs: NodeListOf<HTMLInputElement> | undefined = await waitFor(
     async () => {
-      const text = await fetchRetry(url).then(r => r.text())
+      const text = await retry(fetch, [url]).then(r => r.text())
       console.log('getCartIds text')
       const doc = new DOMParser().parseFromString(text, 'text/html')
       console.log('getCartIds doc')
@@ -120,7 +129,7 @@ function getStoreId(site): Promise<string | null> {
   const url = `${site}/webapp/wcs/stores/servlet/AjaxOrderItemDisplayView`
   return waitFor(
     async () => {
-      const text = await fetchRetry(url).then(res => res.text())
+      const text = await retry(fetch, [url]).then(res => res.text())
       console.log('text')
       const doc = new DOMParser().parseFromString(text, 'text/html')
       console.log('doc')
