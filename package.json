@@ -8,17 +8,19 @@
     "url": "https://github.com/lxieyang/chrome-extension-boilerplate-react.git"
   },
   "scripts": {
-    "build": "NODE_ENV=production webpack build",
-    "dev": "NODE_ENV=development node utils/webserver.js",
+    "build": "webpack build",
+    "dev": "node utils/webserver.js",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "web-ext": "web-ext --source-dir=build/manifest-v2",
     "tsc": "tsc --noEmit",
     "fmt": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}' '!build/**/*'",
     "storybook": "start-storybook -p 6006",
+    "test": "node test-puppeteer.js",
     "build-storybook": "build-storybook"
   },
   "dependencies": {
     "hast-to-hyperscript": "^10.0.1",
+    "promise-rate-limit": "^0.0.1",
     "react": "^18.1.0",
     "react-autosize-container": "^1.0.8",
     "react-dom": "^18.1.0",
@@ -41,6 +43,8 @@
     "@storybook/react": "^6.4.22",
     "@storybook/testing-library": "^0.0.11",
     "@types/chrome": "^0.0.184",
+    "@types/mocha": "^9.1.1",
+    "@types/puppeteer": "^5.4.6",
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",
     "@types/react-svg-pan-zoom": "^3.3.5",
@@ -65,8 +69,13 @@
     "fs-extra": "^10.0.0",
     "html-loader": "^3.1.0",
     "html-webpack-plugin": "^5.5.0",
+    "mocha": "^10.0.0",
     "node-sass": "^6.0.1",
     "prettier": "^2.5.1",
+    "process": "^0.11.10",
+    "puppeteer": "^15.2.0",
+    "puppeteer-extra": "^3.3.0",
+    "puppeteer-extra-plugin-stealth": "^2.10.1",
     "sass-loader": "^12.4.0",
     "source-map-loader": "^3.0.1",
     "storybook": "^6.4.22",
@@ -83,6 +92,7 @@
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "@types/react": "^18.0.8",
+    "puppeteer": "^15.2.0",
     "@types/react-dom": "^18.0.3"
   }
 }

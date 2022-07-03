@@ -16,9 +16,14 @@
       "matches": ["https://github.com/*/blob/*.kicad_pcb"],
       "js": ["contentScript.bundle.js"],
       "css": []
+    },
+    {
+      "matches": ["https://*.kitspace.org/*", "https://*.kitspace.dev/*"],
+      "js": ["kitspaceContentScript.bundle.js"],
+      "css": []
     }
   ],
-  "permissions": ["tabs", "webNavigation", "scripting"],
+  "permissions": ["tabs", "webNavigation", "scripting", "storage", "cookies"],
   "web_accessible_resources": [
     {
       "resources": ["content.styles.css", "icon-128.png", "icon-34.png"],
@@ -26,8 +31,55 @@
     }
   ],
   "host_permissions": [
+    "https://*.mouser.com/*",
+    "https://*.mouser.at/*",
+    "https://*.mouser.be/*",
+    "https://*.mouser.bg/*",
+    "https://*.mouser.ca/*",
+    "https://*.mouser.ch/*",
+    "https://*.mouser.cl/*",
+    "https://*.mouser.co.cr/*",
+    "https://*.mouser.de/*",
+    "https://*.mouser.dk/*",
+    "https://*.mouser.do/*",
+    "https://*.mouser.ec/*",
+    "https://*.mouser.ee/*",
+    "https://*.mouser.es/*",
+    "https://*.mouser.fi/*",
+    "https://*.mouser.fr/*",
+    "https://*.mouser.com.gt/*",
+    "https://*.mouser.hk/*",
+    "https://*.mouser.hn/*",
+    "https://*.mouser.co.id/*",
+    "https://*.mouser.ie/*",
+    "https://*.mouser.co.il/*",
+    "https://*.mouser.in/*",
+    "https://*.mouser.it/*",
+    "https://*.mouser.jp/*",
+    "https://*.mouser.kr/*",
+    "https://*.mouser.li/*",
+    "https://*.mouser.lu/*",
+    "https://*.mouser.mx/*",
+    "https://*.mouser.pe/*",
+    "https://*.mouser.ph/*",
+    "https://*.mouser.pl/*",
+    "https://*.mouser.pr/*",
+    "https://*.mouser.se/*",
+    "https://*.mouser.sg/*",
+    "https://*.mouser.sk/*",
+    "https://*.mouser.com.tr/*",
+    "https://*.mouser.tw/*",
+    "https://*.mouser.co.uk/*",
+    "https://*.mouser.vn/*",
+    "https://*.mouser.co.za/*",
+
+    "https://*.element14.com/*",
+    "https://*.farnell.com/*",
+
     "https://github.com/*",
     "https://raw.githubusercontent.com/*",
-    "https://*.kitspace.dev/*"
+
+    "https://*.kitspace.dev/*",
+    "https://*.kitspace.org/*"
   ]
 }

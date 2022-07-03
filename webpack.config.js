@@ -30,6 +30,10 @@ if (fileSystem.existsSync(secretsPath)) {
 
 const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
   const outputDir = path.resolve(__dirname, 'build', manifestVersion)
+  const test =
+    NODE_ENV !== 'production' &&
+    path.join(__dirname, 'src', 'pages', 'Test', 'index.ts')
+  const testEntry = test ? { test } : {}
   const option = {
     name: manifestVersion,
     mode: NODE_ENV,
@@ -37,7 +41,15 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
       options: path.join(__dirname, 'src', 'pages', 'Options', 'index.tsx'),
       background: path.join(__dirname, 'src', 'pages', 'Background', 'index.ts'),
       contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.tsx'),
+      kitspaceContentScript: path.join(
+        __dirname,
+        'src',
+        'pages',
+        'KitspaceContent',
+        'index.ts',
+      ),
       popup: path.join(__dirname, 'src', 'pages', 'Popup', 'index.tsx'),
+      ...testEntry,
     },
     output: {
       filename: '[name].bundle.js',
@@ -100,12 +112,24 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
       extensions: fileExtensions
         .map(extension => '.' + extension)
         .concat(['.js', '.jsx', '.ts', '.tsx', '.css']),
+      fallback: {
+        stream: require.resolve('stream-browserify'),
+        buffer: require.resolve('buffer/'),
+      },
     },
     plugins: [
+      new webpack.ProvidePlugin({
+        process: 'process/browser',
+      }),
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+      }),
       new CleanWebpackPlugin({ verbose: false }),
       new webpack.ProgressPlugin(),
-      // expose and write the allowed env vars on the compiled bundle
-      new webpack.EnvironmentPlugin(['NODE_ENV']),
+      new webpack.EnvironmentPlugin({
+        // use 'development' unless process.env.NODE_ENV is defined
+        NODE_ENV: 'development',
+      }),
       new CopyWebpackPlugin({
         patterns: [
           {
@@ -120,7 +144,7 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
                 ...JSON.parse(content.toString()),
               }
               if (manifestVersion === 'manifest-v3') {
-                return Buffer.from(JSON.stringify(v3))
+                return Buffer.from(JSON.stringify(v3, null, 2))
               }
 
               const v2 = {
@@ -144,7 +168,7 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
                 ),
                 content_security_policy: "script-src 'self'; object-src 'self'",
               }
-              return Buffer.from(JSON.stringify(v2))
+              return Buffer.from(JSON.stringify(v2, null, 2))
             },
           },
         ],
@@ -203,7 +227,17 @@ const options = ['manifest-v2', 'manifest-v3'].map(manifestVersion => {
       }),
     )
   }
-  if (NODE_ENV === 'development') {
+  if (test) {
+    option.plugins.push(
+      new HtmlWebpackPlugin({
+        template: path.join(__dirname, 'src', 'pages', 'Test', 'index.html'),
+        filename: 'test.html',
+        chunks: ['test'],
+        cache: false,
+      }),
+    )
+  }
+  if (NODE_ENV !== 'production') {
     option.devtool = 'cheap-module-source-map'
   } else {
     option.optimization = {
