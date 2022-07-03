@@ -9,7 +9,7 @@ describe('Farnell', function () {
   this.timeout(120_000)
   afterEach(async function () {
     // delay in between or we get flagged as a bot
-    await delay(1000)
+    await delay(5000)
   })
   describe('init', function () {
     for (const country of Object.values(countries)) {
