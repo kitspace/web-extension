@@ -7,7 +7,7 @@ const headers = {
   'content-type': 'application/x-www-form-urlencoded',
 }
 
-const fetch = promiseRateLimit(40, 1000, global.fetch)
+const fetch = promiseRateLimit(3, 1000, global.fetch)
 
 export async function init({ country }) {
   const farnellSite = sites[country] || sites['Other']
